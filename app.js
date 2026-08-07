@@ -6,43 +6,26 @@ let isListening = false;
 let keepListening = false;
 let restarting = false;
 
-const mantraInput =
-    document.getElementById("mantra");
+const mantraInput = document.getElementById("mantra");
+const targetInput = document.getElementById("target");
 
-const targetInput =
-    document.getElementById("target");
+const countDisplay = document.getElementById("count");
+const targetDisplay = document.getElementById("targetDisplay");
+const progressBar = document.getElementById("progressBar");
 
-const countDisplay =
-    document.getElementById("count");
+const statusDisplay = document.getElementById("status");
+const recognizedText = document.getElementById("recognizedText");
 
-const targetDisplay =
-    document.getElementById("targetDisplay");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
 
-const progressBar =
-    document.getElementById("progressBar");
-
-const statusDisplay =
-    document.getElementById("status");
-
-const recognizedText =
-    document.getElementById("recognizedText");
-
-const startBtn =
-    document.getElementById("startBtn");
-
-const stopBtn =
-    document.getElementById("stopBtn");
-
-const completeCard =
-    document.getElementById("completeCard");
-
-const completeMessage =
-    document.getElementById("completeMessage");
+const completeCard = document.getElementById("completeCard");
+const completeMessage = document.getElementById("completeMessage");
 
 
-/* =========================================
+/* =====================================
    VOICE RECOGNITION
-========================================= */
+===================================== */
 
 const SpeechRecognition =
     window.SpeechRecognition ||
@@ -52,7 +35,7 @@ const SpeechRecognition =
 if (!SpeechRecognition) {
 
     statusDisplay.innerText =
-        "❌ Chromeలో Voice Recognition అందుబాటులో లేదు.";
+        "❌ Chromeలో Voice Recognition support లేదు.";
 
 } else {
 
@@ -60,21 +43,20 @@ if (!SpeechRecognition) {
 }
 
 
-/* =========================================
+/* =====================================
    CREATE RECOGNITION
-========================================= */
+===================================== */
 
 function createRecognition() {
 
-    recognition =
-        new SpeechRecognition();
+    recognition = new SpeechRecognition();
 
     recognition.lang = "te-IN";
 
     /*
-       ఒక్కో speech result వచ్చిన తర్వాత
+       ప్రతి speech result తర్వాత
        session ముగుస్తుంది.
-       onendలో మనం automaticగా restart చేస్తాం.
+       onendలో automatic restart.
     */
 
     recognition.continuous = false;
@@ -82,28 +64,18 @@ function createRecognition() {
     recognition.interimResults = false;
 
 
-    /* =====================================
-       START
-    ===================================== */
-
     recognition.onstart = function () {
 
         isListening = true;
-
         restarting = false;
 
         startBtn.disabled = true;
-
         stopBtn.disabled = false;
 
         statusDisplay.innerText =
             "🎤 వింటున్నాను... మంత్రం పలకండి";
     };
 
-
-    /* =====================================
-       RESULT
-    ===================================== */
 
     recognition.onresult = function (event) {
 
@@ -118,61 +90,54 @@ function createRecognition() {
         }
 
 
-        /*
-           User చెప్పిన మాట చూపిస్తుంది
-        */
-
         recognizedText.innerText =
             spoken;
 
 
         /*
-           మంత్రం verify
+           ఎంత సార్లు పూర్తి మంత్రం
+           వచ్చింది అనేది check.
         */
 
-        const wanted =
-            normalizeMantra(
+        const mantra =
+            normalizeText(
                 mantraInput.value
             );
 
 
-        const spokenText =
-            normalizeMantra(
+        const speech =
+            normalizeText(
                 spoken
             );
 
 
-        const similarity =
-            mantraSimilarity(
-                wanted,
-                spokenText
+        const matchedCount =
+            countCompleteMantras(
+                speech,
+                mantra
             );
 
 
-        console.log(
-            "Mantra:",
-            wanted
-        );
-
-        console.log(
-            "Speech:",
-            spokenText
-        );
-
-        console.log(
-            "Similarity:",
-            similarity
-        );
+        console.log("Speech:", speech);
+        console.log("Mantra:", mantra);
+        console.log("Matched:", matchedCount);
 
 
-        /*
-           75% లేదా అంతకంటే ఎక్కువ
-           similarity ఉంటే count.
-        */
+        if (matchedCount > 0) {
 
-        if (similarity >= 0.75) {
+            for (
+                let i = 0;
+                i < matchedCount;
+                i++
+            ) {
 
-            addCount();
+                addCount();
+
+                if (count >= target) {
+                    break;
+                }
+            }
+
 
             if (count < target) {
 
@@ -184,31 +149,21 @@ function createRecognition() {
         } else {
 
             statusDisplay.innerText =
-                "🔎 మంత్రం సరిపోలలేదు — Count మారలేదు";
+                "🔎 మంత్రం కాదు — Count మారలేదు";
         }
     };
 
-
-    /* =====================================
-       ERROR
-    ===================================== */
 
     recognition.onerror =
         function (event) {
 
             console.log(
-                "Speech Error:",
+                "Voice error:",
                 event.error
             );
 
-
             isListening = false;
 
-
-            /*
-               Permission సమస్య అయితే
-               automatic restart చేయకూడదు.
-            */
 
             if (
                 event.error === "not-allowed" ||
@@ -218,7 +173,6 @@ function createRecognition() {
                 keepListening = false;
 
                 startBtn.disabled = false;
-
                 stopBtn.disabled = true;
 
                 statusDisplay.innerText =
@@ -228,32 +182,17 @@ function createRecognition() {
             }
 
 
-            /*
-               ఇతర చిన్న errorsకి
-               listening కొనసాగుతుంది.
-            */
-
             if (keepListening) {
-
                 restartRecognition();
             }
         };
 
-
-    /* =====================================
-       END
-    ===================================== */
 
     recognition.onend =
         function () {
 
             isListening = false;
 
-
-            /*
-               User Stop నొక్కకపోతే
-               automaticగా మళ్లీ listening.
-            */
 
             if (
                 keepListening &&
@@ -265,18 +204,17 @@ function createRecognition() {
             } else {
 
                 startBtn.disabled = false;
-
                 stopBtn.disabled = true;
             }
         };
 }
 
 
-/* =========================================
-   NORMALIZE MANTRA
-========================================= */
+/* =====================================
+   TEXT NORMALIZATION
+===================================== */
 
-function normalizeMantra(text) {
+function normalizeText(text) {
 
     return text
         .toLowerCase()
@@ -286,88 +224,101 @@ function normalizeMantra(text) {
 }
 
 
-/* =========================================
-   MANTRA SIMILARITY
-========================================= */
+/* =====================================
+   COUNT COMPLETE MANTRAS
+===================================== */
 
-function mantraSimilarity(a, b) {
+function countCompleteMantras(
+    speech,
+    mantra
+) {
 
-    if (!a || !b) {
+    if (!speech || !mantra) {
         return 0;
     }
 
 
     /*
-       Exact match
+       Exact mantra మాత్రమే
+       గుర్తించడానికి words array.
     */
 
-    if (a === b) {
-        return 1;
-    }
+    const speechWords =
+        speech
+            .split(" ")
+            .filter(Boolean);
 
 
-    /*
-       Wordsగా విడగొట్టడం
-    */
-
-    const aWords =
-        a.split(" ")
-        .filter(Boolean);
-
-
-    const bWords =
-        b.split(" ")
-        .filter(Boolean);
+    const mantraWords =
+        mantra
+            .split(" ")
+            .filter(Boolean);
 
 
     if (
-        aWords.length === 0 ||
-        bWords.length === 0
+        speechWords.length === 0 ||
+        mantraWords.length === 0
     ) {
         return 0;
     }
 
 
-    let matched = 0;
+    let matches = 0;
 
 
     /*
-       ప్రతి mantra word
-       speechలో ఉందా చూడటం
+       Speechలో mantra words
+       EXACT ORDERలో ఉన్నాయా?
     */
 
-    aWords.forEach(
-        function (word) {
+    for (
+        let i = 0;
+        i <= speechWords.length - mantraWords.length;
+        i++
+    ) {
+
+        let complete = true;
+
+
+        for (
+            let j = 0;
+            j < mantraWords.length;
+            j++
+        ) {
 
             if (
-                bWords.includes(word)
+                speechWords[i + j] !==
+                mantraWords[j]
             ) {
 
-                matched++;
+                complete = false;
+
+                break;
             }
         }
-    );
 
 
-    /*
-       రెండు వైపులా match percentage
-    */
+        if (complete) {
 
-    const score =
-        matched /
-        Math.max(
-            aWords.length,
-            bWords.length
-        );
+            matches++;
+
+            /*
+               ఒకే wordsను మళ్లీ
+               ఉపయోగించకుండా ముందుకు వెళ్తాం.
+            */
+
+            i += mantraWords.length - 1;
+        }
+    }
 
 
-    return score;
+    return matches;
 }
 
 
-/* =========================================
-   RESTART RECOGNITION
-========================================= */
+/* =====================================
+   RESTART
+===================================== */
 
 function restartRecognition() {
 
@@ -402,14 +353,9 @@ function restartRecognition() {
 
             } catch (error) {
 
-                console.log(
-                    "Restart error:",
-                    error
-                );
-
+                console.log(error);
 
                 restarting = false;
-
 
                 setTimeout(
                     restartRecognition,
@@ -423,9 +369,9 @@ function restartRecognition() {
 }
 
 
-/* =========================================
-   START MANTRA
-========================================= */
+/* =====================================
+   START
+===================================== */
 
 function startMantra() {
 
@@ -462,25 +408,20 @@ function startMantra() {
 
     } catch (error) {
 
-        console.log(
-            "Start error:",
-            error
-        );
-
+        console.log(error);
 
         restartRecognition();
     }
 }
 
 
-/* =========================================
-   STOP MANTRA
-========================================= */
+/* =====================================
+   STOP
+===================================== */
 
 function stopMantra() {
 
     keepListening = false;
-
     restarting = false;
 
 
@@ -499,9 +440,7 @@ function stopMantra() {
 
     isListening = false;
 
-
     startBtn.disabled = false;
-
     stopBtn.disabled = true;
 
 
@@ -510,9 +449,9 @@ function stopMantra() {
 }
 
 
-/* =========================================
+/* =====================================
    ADD COUNT
-========================================= */
+===================================== */
 
 function addCount() {
 
@@ -539,19 +478,11 @@ function addCount() {
         percentage + "%";
 
 
-    /*
-       Mobile vibration
-    */
-
     if (navigator.vibrate) {
 
         navigator.vibrate(60);
     }
 
-
-    /*
-       Target complete
-    */
 
     if (count >= target) {
 
@@ -560,27 +491,20 @@ function addCount() {
 }
 
 
-/* =========================================
+/* =====================================
    COMPLETE
-========================================= */
+===================================== */
 
 function completeJapam() {
 
     keepListening = false;
 
 
-    /*
-       Recognition stop
-    */
-
     if (recognition) {
 
         try {
-
             recognition.stop();
-
         } catch (error) {
-
             console.log(error);
         }
     }
@@ -588,9 +512,7 @@ function completeJapam() {
 
     isListening = false;
 
-
     startBtn.disabled = false;
-
     stopBtn.disabled = true;
 
 
@@ -618,23 +540,22 @@ function completeJapam() {
 }
 
 
-/* =========================================
-   TARGET BUTTONS
-========================================= */
+/* =====================================
+   TARGET
+===================================== */
 
 function setTarget(value) {
 
     targetInput.value =
         value;
 
-
     resetJapam();
 }
 
 
-/* =========================================
+/* =====================================
    RESET
-========================================= */
+===================================== */
 
 function resetJapam() {
 
@@ -675,15 +596,11 @@ function resetJapam() {
 }
 
 
-/* =========================================
+/* =====================================
    TARGET CHANGE
-========================================= */
+===================================== */
 
 targetInput.addEventListener(
     "change",
-    function () {
-
-        resetJapam();
-
-    }
+    resetJapam
 );
