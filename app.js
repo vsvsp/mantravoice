@@ -359,3 +359,10 @@ targetInput.addEventListener(
     "change",
     resetJapam
 );
+function normalizeMantra(text) {
+    return text
+        .toLowerCase()
+        .replace(/[.,!?;:"'`]/g, "")
+        .replace(/\s+/g, "")
+        .trim();
+}
