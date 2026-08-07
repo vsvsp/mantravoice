@@ -11,25 +11,42 @@ let restarting = false;
    ELEMENTS
 ============================== */
 
-const mantraInput = document.getElementById("mantra");
-const targetInput = document.getElementById("target");
+const mantraInput =
+    document.getElementById("mantra");
 
-const countDisplay = document.getElementById("count");
-const targetDisplay = document.getElementById("targetDisplay");
-const progressBar = document.getElementById("progressBar");
+const targetInput =
+    document.getElementById("target");
 
-const statusDisplay = document.getElementById("status");
-const recognizedText = document.getElementById("recognizedText");
+const countDisplay =
+    document.getElementById("count");
 
-const startBtn = document.getElementById("startBtn");
-const stopBtn = document.getElementById("stopBtn");
+const targetDisplay =
+    document.getElementById("targetDisplay");
 
-const completeCard = document.getElementById("completeCard");
-const completeMessage = document.getElementById("completeMessage");
+const progressBar =
+    document.getElementById("progressBar");
+
+const statusDisplay =
+    document.getElementById("status");
+
+const recognizedText =
+    document.getElementById("recognizedText");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const stopBtn =
+    document.getElementById("stopBtn");
+
+const completeCard =
+    document.getElementById("completeCard");
+
+const completeMessage =
+    document.getElementById("completeMessage");
 
 
 /* ==============================
-   VOICE
+   SPEECH RECOGNITION
 ============================== */
 
 const SpeechRecognition =
@@ -54,7 +71,8 @@ if (!SpeechRecognition) {
 
 function createRecognition() {
 
-    recognition = new SpeechRecognition();
+    recognition =
+        new SpeechRecognition();
 
     recognition.lang = "te-IN";
 
@@ -63,159 +81,168 @@ function createRecognition() {
     recognition.interimResults = false;
 
 
-    recognition.onstart = function () {
+    recognition.onstart =
+        function () {
 
-        listening = true;
-        restarting = false;
+            listening = true;
+            restarting = false;
 
-        startBtn.disabled = true;
-        stopBtn.disabled = false;
-
-        statusDisplay.innerText =
-            "🎤 వింటున్నాను... మంత్రం పలకండి";
-    };
-
-
-    recognition.onresult = function (event) {
-
-        const spoken =
-            event.results[0][0]
-            .transcript
-            .trim();
-
-
-        if (!spoken) return;
-
-
-        recognizedText.innerText =
-            spoken;
-
-
-        /*
-          USER BOXలో ఏ మంత్రం టైప్ చేస్తే
-          అదే target mantra.
-        */
-
-        const mantra =
-            normalize(
-                mantraInput.value
-            );
-
-
-        const speech =
-            normalize(
-                spoken
-            );
-
-
-        if (!mantra) {
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
 
             statusDisplay.innerText =
-                "⚠️ ముందుగా మంత్రాన్ని టైప్ చేయండి";
-
-            return;
-        }
+                "🎤 వింటున్నాను... మంత్రం పలకండి";
+        };
 
 
-        const score =
-            calculateScore(
-                mantra,
+    recognition.onresult =
+        function (event) {
+
+            const spoken =
+                event.results[0][0]
+                .transcript
+                .trim();
+
+
+            if (!spoken) {
+                return;
+            }
+
+
+            recognizedText.innerText =
+                spoken;
+
+
+            /*
+              User టైప్ చేసిన మంత్రం
+            */
+
+            const mantra =
+                normalize(
+                    mantraInput.value
+                );
+
+
+            /*
+              Voiceలో వచ్చిన text
+            */
+
+            const speech =
+                normalize(
+                    spoken
+                );
+
+
+            if (!mantra) {
+
+                statusDisplay.innerText =
+                    "⚠️ ముందుగా మంత్రాన్ని టైప్ చేయండి";
+
+                return;
+            }
+
+
+            const score =
+                calculateScore(
+                    mantra,
+                    speech
+                );
+
+
+            console.log(
+                "Typed Mantra:",
+                mantra
+            );
+
+            console.log(
+                "Voice:",
                 speech
             );
 
-
-        console.log(
-            "Typed Mantra:",
-            mantra
-        );
-
-        console.log(
-            "Voice:",
-            speech
-        );
-
-        console.log(
-            "Score:",
-            score
-        );
+            console.log(
+                "Match Score:",
+                score
+            );
 
 
-        /*
-          80% match అయితే count
-        */
+            /*
+              Match అయితే Count
+            */
 
-        if (score >= 0.80) {
+            if (score >= 0.80) {
 
-            addCount();
+                addCount();
 
-            if (count < target) {
+                if (count < target) {
+
+                    statusDisplay.innerText =
+                        "🙏 మంత్రం గుర్తించబడింది — Count " +
+                        count;
+                }
+
+            } else {
 
                 statusDisplay.innerText =
-                    "🙏 మంత్రం గుర్తించబడింది — Count " +
-                    count;
+                    "🔎 మంత్రం కాదు — Count మారలేదు";
+            }
+        };
+
+
+    recognition.onerror =
+        function (event) {
+
+            console.log(
+                "Voice Error:",
+                event.error
+            );
+
+
+            listening = false;
+
+
+            if (
+                event.error === "not-allowed" ||
+                event.error === "service-not-allowed"
+            ) {
+
+                keepListening = false;
+
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+
+                statusDisplay.innerText =
+                    "🎤 Microphone permission ఇవ్వండి";
+
+                return;
             }
 
-        } else {
 
-            statusDisplay.innerText =
-                "🔎 మంత్రం కాదు — Count మారలేదు";
-        }
-    };
+            if (keepListening) {
 
-
-    recognition.onerror = function (event) {
-
-        console.log(
-            "Voice Error:",
-            event.error
-        );
+                restartRecognition();
+            }
+        };
 
 
-        listening = false;
+    recognition.onend =
+        function () {
+
+            listening = false;
 
 
-        if (
-            event.error === "not-allowed" ||
-            event.error === "service-not-allowed"
-        ) {
+            if (
+                keepListening &&
+                count < target
+            ) {
 
-            keepListening = false;
+                restartRecognition();
 
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
+            } else {
 
-            statusDisplay.innerText =
-                "🎤 Microphone permission ఇవ్వండి";
-
-            return;
-        }
-
-
-        if (keepListening) {
-
-            restartRecognition();
-        }
-    };
-
-
-    recognition.onend = function () {
-
-        listening = false;
-
-
-        if (
-            keepListening &&
-            count < target
-        ) {
-
-            restartRecognition();
-
-        } else {
-
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        }
-    };
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        };
 }
 
 
@@ -234,10 +261,13 @@ function normalize(text) {
 
 
 /* ==============================
-   MATCH
+   MANTRA MATCHING
 ============================== */
 
-function calculateScore(mantra, speech) {
+function calculateScore(
+    mantra,
+    speech
+) {
 
     if (!mantra || !speech) {
         return 0;
@@ -245,128 +275,165 @@ function calculateScore(mantra, speech) {
 
 
     /*
+      Spaces remove చేస్తాం.
+
+      ఉదాహరణ:
+
+      ఓం నమఃశివాయ
+
+      ఓం నమః శివాయ
+
+      రెండూ:
+
+      ఓంనమఃశివాయ
+    */
+
+    const targetText =
+        mantra
+        .replace(/\s+/g, "")
+        .trim();
+
+
+    const spokenText =
+        speech
+        .replace(/\s+/g, "")
+        .trim();
+
+
+    /*
       Exact match
     */
 
-    if (mantra === speech) {
+    if (
+        targetText ===
+        spokenText
+    ) {
+
         return 1;
     }
 
 
-    const mantraWords =
-        mantra
-        .split(" ")
-        .filter(Boolean);
-
-
-    const speechWords =
-        speech
-        .split(" ")
-        .filter(Boolean);
-
+    /*
+      Voice textలో target
+      పూర్తిగా ఉంటే match
+    */
 
     if (
-        speechWords.length <
-        mantraWords.length
+        spokenText.includes(
+            targetText
+        )
     ) {
 
-        return 0;
-    }
-
-
-    let bestScore = 0;
-
-
-    for (
-        let start = 0;
-        start <=
-        speechWords.length -
-        mantraWords.length;
-        start++
-    ) {
-
-        let matched = 0;
-
-
-        for (
-            let i = 0;
-            i < mantraWords.length;
-            i++
-        ) {
-
-            const wanted =
-                mantraWords[i];
-
-            const spoken =
-                speechWords[start + i];
-
-
-            if (
-                wordMatch(
-                    wanted,
-                    spoken
-                )
-            ) {
-
-                matched++;
-            }
-        }
-
-
-        const score =
-            matched /
-            mantraWords.length;
-
-
-        if (score > bestScore) {
-
-            bestScore = score;
-        }
-    }
-
-
-    return bestScore;
-}
-
-
-/* ==============================
-   WORD MATCH
-============================== */
-
-function wordMatch(wanted, spoken) {
-
-    if (wanted === spoken) {
-        return true;
+        return 1;
     }
 
 
     /*
-      Telugu speechలో చిన్న
-      spelling/transcription difference
+      Target text voice textలో
+      చిన్న differenceతో ఉంటే
+      similarity check.
     */
 
-    if (
-        wanted.length >= 4 &&
-        spoken.length >= 4
+    const distance =
+        levenshteinDistance(
+            targetText,
+            spokenText
+        );
+
+
+    const maxLength =
+        Math.max(
+            targetText.length,
+            spokenText.length
+        );
+
+
+    if (maxLength === 0) {
+        return 1;
+    }
+
+
+    const score =
+        1 -
+        (
+            distance /
+            maxLength
+        );
+
+
+    return score;
+}
+
+
+/* ==============================
+   LEVENSHTEIN DISTANCE
+============================== */
+
+function levenshteinDistance(
+    a,
+    b
+) {
+
+    const matrix = [];
+
+
+    for (
+        let i = 0;
+        i <= b.length;
+        i++
     ) {
 
-        const wantedStart =
-            wanted.substring(0, 4);
-
-        const spokenStart =
-            spoken.substring(0, 4);
+        matrix[i] = [i];
+    }
 
 
-        if (
-            wantedStart === spokenStart
+    for (
+        let j = 0;
+        j <= a.length;
+        j++
+    ) {
+
+        matrix[0][j] = j;
+    }
+
+
+    for (
+        let i = 1;
+        i <= b.length;
+        i++
+    ) {
+
+        for (
+            let j = 1;
+            j <= a.length;
+            j++
         ) {
 
-            return true;
+            if (
+                b.charAt(i - 1) ===
+                a.charAt(j - 1)
+            ) {
+
+                matrix[i][j] =
+                    matrix[i - 1][j - 1];
+
+            } else {
+
+                matrix[i][j] =
+                    Math.min(
+
+                        matrix[i - 1][j - 1] + 1,
+
+                        matrix[i][j - 1] + 1,
+
+                        matrix[i - 1][j] + 1
+                    );
+            }
         }
     }
 
 
-    return false;
+    return matrix[b.length][a.length];
 }
 
 
@@ -381,6 +448,7 @@ function restartRecognition() {
         listening ||
         restarting
     ) {
+
         return;
     }
 
@@ -388,34 +456,42 @@ function restartRecognition() {
     restarting = true;
 
 
-    setTimeout(function () {
+    setTimeout(
+        function () {
 
-        if (!keepListening) {
+            if (!keepListening) {
 
-            restarting = false;
-            return;
-        }
+                restarting = false;
+                return;
+            }
 
 
-        try {
+            try {
 
-            createRecognition();
+                createRecognition();
 
-            recognition.start();
+                recognition.start();
 
-        } catch (error) {
+            } catch (error) {
 
-            console.log(error);
+                console.log(
+                    "Restart error:",
+                    error
+                );
 
-            restarting = false;
 
-            setTimeout(
-                restartRecognition,
-                700
-            );
-        }
+                restarting = false;
 
-    }, 400);
+
+                setTimeout(
+                    restartRecognition,
+                    700
+                );
+            }
+
+        },
+        400
+    );
 }
 
 
@@ -472,6 +548,7 @@ function startMantra() {
 function stopMantra() {
 
     keepListening = false;
+
     restarting = false;
 
 
@@ -490,6 +567,7 @@ function stopMantra() {
 
     listening = false;
 
+
     startBtn.disabled = false;
     stopBtn.disabled = true;
 
@@ -500,7 +578,7 @@ function stopMantra() {
 
 
 /* ==============================
-   COUNT + SAVE
+   ADD COUNT
 ============================== */
 
 function addCount() {
@@ -535,6 +613,26 @@ function addCount() {
     localStorage.setItem(
         "mantraCount",
         count
+    );
+
+
+    /*
+      Save mantra
+    */
+
+    localStorage.setItem(
+        "mantraText",
+        mantraInput.value
+    );
+
+
+    /*
+      Save target
+    */
+
+    localStorage.setItem(
+        "mantraTarget",
+        target
     );
 
 
@@ -575,6 +673,7 @@ function completeJapam() {
 
     listening = false;
 
+
     startBtn.disabled = false;
     stopBtn.disabled = true;
 
@@ -604,7 +703,7 @@ function completeJapam() {
 
 
 /* ==============================
-   TARGET
+   SET TARGET
 ============================== */
 
 function setTarget(value) {
@@ -652,6 +751,16 @@ function resetJapam() {
     );
 
 
+    localStorage.removeItem(
+        "mantraText"
+    );
+
+
+    localStorage.removeItem(
+        "mantraTarget"
+    );
+
+
     recognizedText.innerText =
         "Microphone ప్రారంభించిన తర్వాత మీ మాట ఇక్కడ కనిపిస్తుంది.";
 
@@ -666,7 +775,7 @@ function resetJapam() {
 
 
 /* ==============================
-   LOAD SAVED COUNT
+   LOAD SAVED DATA
 ============================== */
 
 function loadSavedData() {
@@ -677,6 +786,22 @@ function loadSavedData() {
         );
 
 
+    const savedMantra =
+        localStorage.getItem(
+            "mantraText"
+        );
+
+
+    const savedTarget =
+        localStorage.getItem(
+            "mantraTarget"
+        );
+
+
+    /*
+      Load count
+    */
+
     if (savedCount !== null) {
 
         count =
@@ -686,10 +811,35 @@ function loadSavedData() {
     }
 
 
-    target =
-        parseInt(
-            targetInput.value
-        ) || 1100;
+    /*
+      Load mantra
+    */
+
+    if (
+        savedMantra !== null &&
+        savedMantra.trim() !== ""
+    ) {
+
+        mantraInput.value =
+            savedMantra;
+    }
+
+
+    /*
+      Load target
+    */
+
+    if (savedTarget !== null) {
+
+        target =
+            parseInt(
+                savedTarget
+            ) || 1100;
+
+
+        targetInput.value =
+            target;
+    }
 
 
     countDisplay.innerText =
