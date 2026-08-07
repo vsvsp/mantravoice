@@ -19,7 +19,6 @@ const stopBtn = document.getElementById("stopBtn");
 const completeCard = document.getElementById("completeCard");
 const completeMessage = document.getElementById("completeMessage");
 
-
 const SpeechRecognition =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
@@ -34,29 +33,27 @@ if (!SpeechRecognition) {
 
     recognition = new SpeechRecognition();
 
+    recognition.lang = "te-IN";
+
     recognition.continuous = true;
 
-    recognition.interimResults = true;
-
-    recognition.lang = "te-IN";
+    recognition.interimResults = false;
 
 
     recognition.onstart = function () {
 
         listening = true;
 
-        statusDisplay.innerText =
-            "🎤 వింటున్నాను... మంత్రం పలకండి";
-
         startBtn.disabled = true;
 
         stopBtn.disabled = false;
+
+        statusDisplay.innerText =
+            "🎤 వింటున్నాను... మంత్రం పలకండి";
     };
 
 
     recognition.onresult = function (event) {
-
-        let finalText = "";
 
         for (
             let i = event.resultIndex;
@@ -64,37 +61,59 @@ if (!SpeechRecognition) {
             i++
         ) {
 
-            const text =
-                event.results[i][0].transcript;
-
-            recognizedText.innerText = text;
-
-            if (event.results[i].isFinal) {
-
-                finalText += " " + text;
+            if (!event.results[i].isFinal) {
+                continue;
             }
-        }
 
 
-        finalText = finalText.trim();
+            const spoken =
+                event.results[i][0].transcript.trim();
 
 
-        if (finalText !== "") {
+            if (!spoken) {
+                continue;
+            }
+
+
+            /* మీరు చెప్పిన మాట చూపించు */
+
+            recognizedText.innerText =
+                spoken;
+
+
+            /*
+               TEST MODE:
+               Voiceలో ఒక final phrase వస్తే
+               ఒక count పెంచుతుంది.
+            */
+
+            addCount();
+
 
             statusDisplay.innerText =
-                "🎤 మీరు చెప్పింది: " + finalText;
+                "🙏 మంత్రం గుర్తించబడింది — " +
+                count;
 
-            checkMantra(finalText);
+
+            console.log(
+                "Recognized:",
+                spoken
+            );
         }
     };
 
 
     recognition.onerror = function (event) {
 
-        console.log("Speech error:", event.error);
+        console.log(
+            "Voice Error:",
+            event.error
+        );
+
 
         statusDisplay.innerText =
-            "⚠️ " + event.error;
+            "⚠️ Voice: " + event.error;
+
 
         listening = false;
 
@@ -111,96 +130,20 @@ if (!SpeechRecognition) {
         startBtn.disabled = false;
 
         stopBtn.disabled = true;
-
     };
 }
 
 
-/* Telugu speech comparison */
-
-function normalizeText(text) {
-
-    return text
-        .toLowerCase()
-        .replace(/[.,!?;:"'`]/g, "")
-        .replace(/\s+/g, "")
-        .trim();
-}
-
-
-function checkMantra(spokenText) {
-
-    const wanted =
-        normalizeText(mantraInput.value);
-
-    const spoken =
-        normalizeText(spokenText);
-
-
-    console.log("Wanted:", wanted);
-
-    console.log("Spoken:", spoken);
-
-
-    /*
-       మొదటి versionలో exact match ఉండేది.
-       ఇప్పుడు mantraలోని ముఖ్యమైన పదాలు
-       గుర్తిస్తే count అవుతుంది.
-    */
-
-
-    const words =
-        mantraInput.value
-        .trim()
-        .split(/\s+/)
-        .filter(word => word.length > 1);
-
-
-    let matched = 0;
-
-
-    for (const word of words) {
-
-        const cleanWord =
-            normalizeText(word);
-
-
-        if (spoken.includes(cleanWord)) {
-
-            matched++;
-        }
-    }
-
-
-    /*
-       కనీసం 1 ముఖ్యమైన పదం గుర్తిస్తే
-       count చేయడానికి అనుమతిస్తున్నాం.
-    */
-
-    if (
-        matched >= 1 ||
-        spoken.includes(wanted) ||
-        wanted.includes(spoken)
-    ) {
-
-        addCount();
-
-    } else {
-
-        statusDisplay.innerText =
-            "🔎 మంత్రం స్పష్టంగా వినిపించలేదు. మళ్లీ పలకండి.";
-    }
-}
-
-
-/* Start */
+/* =========================
+   START
+========================= */
 
 function startMantra() {
 
     if (!recognition) {
 
         alert(
-            "Chromeలో Voice Recognition support అవసరం."
+            "Chromeలో Voice Recognition support లేదు."
         );
 
         return;
@@ -231,11 +174,16 @@ function startMantra() {
 }
 
 
-/* Stop */
+/* =========================
+   STOP
+========================= */
 
 function stopMantra() {
 
-    if (recognition && listening) {
+    if (
+        recognition &&
+        listening
+    ) {
 
         recognition.stop();
     }
@@ -253,12 +201,13 @@ function stopMantra() {
 }
 
 
-/* Count */
+/* =========================
+   COUNT
+========================= */
 
 function addCount() {
 
     if (count >= target) {
-
         return;
     }
 
@@ -281,13 +230,9 @@ function addCount() {
         percentage + "%";
 
 
-    statusDisplay.innerText =
-        "🙏 మంత్రం గుర్తించబడింది — Count " + count;
-
-
     if (navigator.vibrate) {
 
-        navigator.vibrate(70);
+        navigator.vibrate(60);
     }
 
 
@@ -298,7 +243,9 @@ function addCount() {
 }
 
 
-/* Complete */
+/* =========================
+   COMPLETE
+========================= */
 
 function completeJapam() {
 
@@ -310,36 +257,32 @@ function completeJapam() {
 
 
     completeMessage.innerText =
-        target + " జపాలు పూర్తయ్యాయి 🙏";
+        target +
+        " జపాలు పూర్తయ్యాయి 🙏";
 
 
     statusDisplay.innerText =
         "🎉 జపం పూర్తయింది";
-
-
-    if (navigator.vibrate) {
-
-        navigator.vibrate([
-            300,
-            150,
-            300
-        ]);
-    }
 }
 
 
-/* Target */
+/* =========================
+   TARGET
+========================= */
 
 function setTarget(value) {
 
     targetInput.value =
         value;
 
+
     resetJapam();
 }
 
 
-/* Reset */
+/* =========================
+   RESET
+========================= */
 
 function resetJapam() {
 
