@@ -6,8 +6,6 @@ let listening = false;
 let keepListening = false;
 let restarting = false;
 
-let lastMantra = "";
-
 
 /* =========================
    ELEMENTS
@@ -35,7 +33,7 @@ const completeMessage = document.getElementById("completeMessage");
    NORMALIZE
 ========================= */
 
-function normalize(text) {
+function cleanText(text) {
 
     return String(text || "")
         .toLowerCase()
@@ -46,80 +44,108 @@ function normalize(text) {
 
 
 /* =========================
-   MANTRA KEY
+   REMOVE SPACES
 ========================= */
 
-function mantraKey(text) {
+function compactText(text) {
 
-    return normalize(text)
+    return cleanText(text)
         .replace(/\s+/g, "");
 }
 
 
 /* =========================
-   RESET COUNT
+   CLEAR OLD COUNT
 ========================= */
 
-function resetCountOnly() {
+/*
+   IMPORTANT:
+   Old saved count is cleared
+   when this new app starts.
+*/
 
-    count = 0;
+localStorage.removeItem("mantraCount");
 
-    countDisplay.innerText = "0";
+count = 0;
 
-    progressBar.style.width = "0%";
+countDisplay.innerText = "0";
 
-    localStorage.setItem(
-        "mantraCount",
-        "0"
-    );
-}
+
+/* =========================
+   TARGET
+========================= */
+
+target =
+    parseInt(targetInput.value) || 1100;
+
+targetDisplay.innerText =
+    target;
+
+
+/* =========================
+   TARGET CHANGE
+========================= */
+
+targetInput.addEventListener(
+    "change",
+    function () {
+
+        target =
+            parseInt(
+                targetInput.value
+            ) || 1100;
+
+        targetDisplay.innerText =
+            target;
+
+        resetCount();
+
+    }
+);
 
 
 /* =========================
    MANTRA CHANGE
 ========================= */
 
-if (mantraInput) {
+mantraInput.addEventListener(
+    "input",
+    function () {
 
-    mantraInput.addEventListener(
-        "input",
-        function () {
+        /*
+           New mantra = new count
+        */
 
-            const current =
-                mantraKey(
-                    mantraInput.value
-                );
+        resetCount();
 
-            if (
-                current !== lastMantra
-            ) {
+        localStorage.setItem(
+            "mantraText",
+            mantraInput.value
+        );
+    }
+);
 
-                count = 0;
 
-                countDisplay.innerText =
-                    "0";
+/* =========================
+   RESET COUNT
+========================= */
 
-                progressBar.style.width =
-                    "0%";
+function resetCount() {
 
-                localStorage.setItem(
-                    "mantraCount",
-                    "0"
-                );
+    count = 0;
 
-                localStorage.setItem(
-                    "mantraText",
-                    mantraInput.value
-                );
+    countDisplay.innerText =
+        "0";
 
-                lastMantra =
-                    current;
+    progressBar.style.width =
+        "0%";
 
-                statusDisplay.innerText =
-                    "🕉️ కొత్త మంత్రం సిద్ధంగా ఉంది";
-            }
-        }
+    localStorage.removeItem(
+        "mantraCount"
     );
+
+    completeCard.style.display =
+        "none";
 }
 
 
@@ -144,7 +170,7 @@ if (!SpeechRecognition) {
 
 
 /* =========================
-   CREATE
+   CREATE RECOGNITION
 ========================= */
 
 function createRecognition() {
@@ -152,12 +178,19 @@ function createRecognition() {
     recognition =
         new SpeechRecognition();
 
-    recognition.lang = "te-IN";
+    recognition.lang =
+        "te-IN";
 
-    recognition.continuous = false;
+    recognition.continuous =
+        false;
 
-    recognition.interimResults = false;
+    recognition.interimResults =
+        false;
 
+
+    /* =====================
+       START
+    ===================== */
 
     recognition.onstart =
         function () {
@@ -166,14 +199,20 @@ function createRecognition() {
 
             restarting = false;
 
-            startBtn.disabled = true;
+            startBtn.disabled =
+                true;
 
-            stopBtn.disabled = false;
+            stopBtn.disabled =
+                false;
 
             statusDisplay.innerText =
                 "🎤 వింటున్నాను... మంత్రం పలకండి";
         };
 
+
+    /* =====================
+       RESULT
+    ===================== */
 
     recognition.onresult =
         function (event) {
@@ -194,15 +233,26 @@ function createRecognition() {
 
 
             const mantra =
-                normalize(
+                compactText(
                     mantraInput.value
                 );
 
 
-            const speech =
-                normalize(
+            const voice =
+                compactText(
                     spoken
                 );
+
+
+            console.log(
+                "Mantra:",
+                mantra
+            );
+
+            console.log(
+                "Voice:",
+                voice
+            );
 
 
             if (!mantra) {
@@ -215,44 +265,17 @@ function createRecognition() {
 
 
             /*
-              Spaces మాత్రమే ignore చేస్తాం.
+              EXACT MATCH
 
               ఓం నమఃశివాయ
               ఓం నమః శివాయ
 
-              రెండూ same అవుతాయి.
-            */
-
-            const targetText =
-                mantraKey(
-                    mantra
-                );
-
-
-            const spokenText =
-                mantraKey(
-                    speech
-                );
-
-
-            console.log(
-                "MANTRA:",
-                targetText
-            );
-
-            console.log(
-                "VOICE:",
-                spokenText
-            );
-
-
-            /*
-              Exact mantra match
+              spaces తీసేసిన తర్వాత
+              రెండూ ఒకటే.
             */
 
             if (
-                targetText ===
-                spokenText
+                mantra === voice
             ) {
 
                 addCount();
@@ -264,16 +287,20 @@ function createRecognition() {
             } else {
 
                 statusDisplay.innerText =
-                    "🔎 మంత్రం సరిపోలలేదు";
+                    "🔎 మంత్రం సరిపోలలేదు — Count మారలేదు";
             }
         };
 
+
+    /* =====================
+       ERROR
+    ===================== */
 
     recognition.onerror =
         function (event) {
 
             console.log(
-                "Voice Error:",
+                "Speech error:",
                 event.error
             );
 
@@ -290,9 +317,11 @@ function createRecognition() {
 
                 keepListening = false;
 
-                startBtn.disabled = false;
+                startBtn.disabled =
+                    false;
 
-                stopBtn.disabled = true;
+                stopBtn.disabled =
+                    true;
 
                 statusDisplay.innerText =
                     "🎤 Microphone permission ఇవ్వండి";
@@ -307,6 +336,10 @@ function createRecognition() {
             }
         };
 
+
+    /* =====================
+       END
+    ===================== */
 
     recognition.onend =
         function () {
@@ -323,16 +356,18 @@ function createRecognition() {
 
             } else {
 
-                startBtn.disabled = false;
+                startBtn.disabled =
+                    false;
 
-                stopBtn.disabled = true;
+                stopBtn.disabled =
+                    true;
             }
         };
 }
 
 
 /* =========================
-   AUTO RESTART
+   RESTART
 ========================= */
 
 function restartRecognition() {
@@ -369,7 +404,9 @@ function restartRecognition() {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(
+                    error
+                );
 
                 restarting = false;
 
@@ -386,7 +423,7 @@ function restartRecognition() {
 
 
 /* =========================
-   START
+   START JAPAM
 ========================= */
 
 function startMantra() {
@@ -411,11 +448,12 @@ function startMantra() {
         target;
 
 
+    keepListening =
+        true;
+
+
     completeCard.style.display =
         "none";
-
-
-    keepListening = true;
 
 
     try {
@@ -424,7 +462,9 @@ function startMantra() {
 
     } catch (error) {
 
-        console.log(error);
+        console.log(
+            error
+        );
 
         restartRecognition();
     }
@@ -437,9 +477,11 @@ function startMantra() {
 
 function stopMantra() {
 
-    keepListening = false;
+    keepListening =
+        false;
 
-    restarting = false;
+    restarting =
+        false;
 
 
     if (recognition) {
@@ -450,16 +492,22 @@ function stopMantra() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
         }
     }
 
 
-    listening = false;
+    listening =
+        false;
 
-    startBtn.disabled = false;
 
-    stopBtn.disabled = true;
+    startBtn.disabled =
+        false;
+
+    stopBtn.disabled =
+        true;
 
 
     statusDisplay.innerText =
@@ -502,18 +550,6 @@ function addCount() {
     );
 
 
-    localStorage.setItem(
-        "mantraText",
-        mantraInput.value
-    );
-
-
-    localStorage.setItem(
-        "mantraTarget",
-        String(target)
-    );
-
-
     if (navigator.vibrate) {
 
         navigator.vibrate(60);
@@ -533,7 +569,8 @@ function addCount() {
 
 function completeJapam() {
 
-    keepListening = false;
+    keepListening =
+        false;
 
 
     if (recognition) {
@@ -544,16 +581,22 @@ function completeJapam() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
         }
     }
 
 
-    listening = false;
+    listening =
+        false;
 
-    startBtn.disabled = false;
 
-    stopBtn.disabled = true;
+    startBtn.disabled =
+        false;
+
+    stopBtn.disabled =
+        true;
 
 
     completeCard.style.display =
@@ -567,61 +610,34 @@ function completeJapam() {
 
     statusDisplay.innerText =
         "🎉 జపం పూర్తయింది";
+
+
+    if (navigator.vibrate) {
+
+        navigator.vibrate([
+            300,
+            150,
+            300
+        ]);
+    }
 }
 
 
 /* =========================
-   RESET
+   RESET BUTTON
 ========================= */
 
 function resetJapam() {
 
     stopMantra();
 
-
-    count = 0;
-
-
-    target =
-        parseInt(
-            targetInput.value
-        ) || 1100;
-
-
-    countDisplay.innerText =
-        "0";
-
-
-    targetDisplay.innerText =
-        target;
-
-
-    progressBar.style.width =
-        "0%";
-
-
-    localStorage.setItem(
-        "mantraCount",
-        "0"
-    );
-
-
-    localStorage.setItem(
-        "mantraTarget",
-        String(target)
-    );
-
+    resetCount();
 
     recognizedText.innerText =
         "Microphone ప్రారంభించిన తర్వాత మీ మాట ఇక్కడ కనిపిస్తుంది.";
 
-
     statusDisplay.innerText =
         "🎤 Start నొక్కి మంత్రం పలకండి";
-
-
-    completeCard.style.display =
-        "none";
 }
 
 
@@ -634,95 +650,11 @@ function setTarget(value) {
     targetInput.value =
         value;
 
-    resetJapam();
-}
-
-
-/* =========================
-   LOAD
-========================= */
-
-function loadSavedData() {
-
-    const savedCount =
-        localStorage.getItem(
-            "mantraCount"
-        );
-
-
-    const savedMantra =
-        localStorage.getItem(
-            "mantraText"
-        );
-
-
-    const savedTarget =
-        localStorage.getItem(
-            "mantraTarget"
-        );
-
-
-    if (savedMantra) {
-
-        mantraInput.value =
-            savedMantra;
-    }
-
-
-    if (savedTarget) {
-
-        target =
-            parseInt(
-                savedTarget
-            ) || 1100;
-
-        targetInput.value =
-            target;
-    }
-
-
-    /*
-      Saved count
-    */
-
-    count =
-        parseInt(
-            savedCount
-        ) || 0;
-
-
-    /*
-      Display
-    */
-
-    countDisplay.innerText =
-        count;
-
+    target =
+        value;
 
     targetDisplay.innerText =
         target;
 
-
-    const percentage =
-        Math.min(
-            (count / target) * 100,
-            100
-        );
-
-
-    progressBar.style.width =
-        percentage + "%";
-
-
-    lastMantra =
-        mantraKey(
-            mantraInput.value
-        );
+    resetCount();
 }
-
-
-/* =========================
-   LOAD APP
-========================= */
-
-loadSavedData();
