@@ -1,0 +1,11 @@
+{
+  "name": "MantraVoice",
+  "short_name": "MantraVoice",
+  "description": "జపం మీ స్వరం… లెక్క మా బాధ్యత",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5b2c83",
+  "orientation": "portrait",
+  "lang": "te-IN"
+}
