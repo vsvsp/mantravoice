@@ -1,224 +1,654 @@
+/* ================================
+   MantraVoice - Responsive CSS
+   ================================ */
+
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    min-height: 100%;
 }
 
 body {
-    font-family: Arial, "Noto Sans Telugu", sans-serif;
-    background: #f6f3fa;
-    color: #29212f;
+    width: 100%;
     min-height: 100vh;
+    font-family:
+        "Noto Sans Telugu",
+        "Nirmala UI",
+        Arial,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #faf4ff 0%,
+            #ffffff 45%,
+            #faf6ff 100%
+        );
+
+    color: #3d2450;
+    overflow-x: hidden;
 }
 
-header {
-    background: linear-gradient(135deg, #54247b, #8e44ad);
+
+/* ================================
+   HEADER
+   ================================ */
+
+.app-header {
+    width: 100%;
+    background:
+        linear-gradient(
+            135deg,
+            #4a148c,
+            #7b1fa2,
+            #9c4dcc
+        );
+
     color: white;
     text-align: center;
-    padding: 25px 15px;
+
+    padding: 22px 16px 20px;
+
+    border-radius:
+        0 0 24px 24px;
+
+    box-shadow:
+        0 6px 22px rgba(90, 30, 130, 0.25);
 }
 
 .logo {
-    font-size: 28px;
-    font-weight: bold;
+    font-size: clamp(25px, 6vw, 38px);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.logo span {
+    margin-left: 4px;
 }
 
 .tagline {
     margin-top: 7px;
-    font-size: 14px;
+    font-size: clamp(13px, 3.5vw, 17px);
+    opacity: 0.95;
 }
 
+
+/* ================================
+   MAIN
+   ================================ */
+
 main {
-    max-width: 600px;
-    margin: auto;
-    padding: 18px;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 22px 16px 40px;
 }
+
+
+/* ================================
+   INTRO
+   ================================ */
 
 .intro {
     text-align: center;
-    padding: 22px 5px;
+    padding: 8px 5px 20px;
 }
 
 .intro h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
+    color: #4a148c;
+    font-size: clamp(24px, 6vw, 34px);
+    line-height: 1.4;
+    margin-bottom: 12px;
 }
 
 .intro p {
-    color: #6d6575;
-    line-height: 1.7;
+    color: #777;
+    font-size: clamp(14px, 3.8vw, 17px);
+    line-height: 1.8;
 }
 
+
+/* ================================
+   CARD
+   ================================ */
+
 .card {
-    background: white;
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid #eee2f5;
+
+    border-radius: 22px;
+
+    padding: clamp(18px, 5vw, 28px);
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 6px 24px rgba(75, 30, 100, 0.08);
 }
+
+
+/* ================================
+   LABELS
+   ================================ */
 
 label {
     display: block;
-    font-weight: bold;
+
+    color: #4a148c;
+
+    font-weight: 700;
+
+    font-size: clamp(15px, 4vw, 18px);
+
     margin-bottom: 8px;
+
+    margin-top: 8px;
 }
+
+
+/* ================================
+   INPUT
+   ================================ */
 
 input {
     width: 100%;
-    padding: 15px;
-    margin-bottom: 18px;
-    border: 1px solid #ddd5e4;
-    border-radius: 12px;
+
+    min-height: 54px;
+
+    border: 2px solid #eadcf1;
+
+    border-radius: 14px;
+
+    background: #fcf9ff;
+
+    color: #333;
+
+    padding: 12px 15px;
+
     font-size: 17px;
+
     outline: none;
+
+    margin-bottom: 16px;
+
+    transition: 0.2s;
 }
 
 input:focus {
     border-color: #8e44ad;
+
+    box-shadow:
+        0 0 0 3px rgba(142, 68, 173, 0.12);
 }
 
+
+/* ================================
+   TARGET BUTTONS
+   ================================ */
+
 .targets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+
+    margin-top: 4px;
 }
 
 .targets button {
-    flex: 1;
-    min-width: 60px;
-    padding: 11px 5px;
-    border: 1px solid #d8cbe2;
-    border-radius: 10px;
-    background: #faf7fc;
-    color: #5b2c83;
-    font-weight: bold;
+    width: 100%;
+
+    min-height: 52px;
+
+    border: 1px solid #ead9f3;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fbf1ff,
+            #f4e5fb
+        );
+
+    color: #5b2080;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s,
+        background 0.15s;
 }
+
+.targets button:active {
+    transform: scale(0.96);
+}
+
+
+/* ================================
+   COUNTER
+   ================================ */
 
 .counter {
     text-align: center;
+
+    padding-top: 24px;
+    padding-bottom: 24px;
 }
 
 .small {
     color: #777;
-    font-size: 14px;
+
+    font-size: 15px;
+
+    margin-bottom: 3px;
 }
 
 .count {
-    font-size: 78px;
-    font-weight: bold;
-    color: #5b2c83;
-    margin: 5px 0;
+    color: #6a1b9a;
+
+    font-size: clamp(76px, 20vw, 130px);
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    margin: 8px 0;
 }
 
 .target {
-    font-size: 20px;
-    color: #666;
+    color: #777;
+
+    font-size: clamp(20px, 5vw, 26px);
+
+    font-weight: 600;
 }
 
+
+/* ================================
+   PROGRESS
+   ================================ */
+
 .progress {
-    height: 12px;
-    background: #eee8f2;
+    width: 100%;
+
+    height: 10px;
+
+    background: #eee4f4;
+
     border-radius: 20px;
+
     overflow: hidden;
-    margin: 20px 0;
+
+    margin-top: 20px;
 }
 
 .progress-bar {
-    height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #5b2c83, #b565d9);
-    transition: .3s;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #6a1b9a,
+            #ab47bc
+        );
+
+    border-radius: 20px;
+
+    transition:
+        width 0.3s ease;
 }
 
 .status {
-    color: #666;
+    color: #777;
+
     font-size: 14px;
+
+    margin-top: 13px;
+
+    min-height: 22px;
 }
+
+
+/* ================================
+   START / STOP BUTTONS
+   ================================ */
 
 .buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 18px;
 }
 
-.start-button,
-.stop-button,
-.reset-button {
-    border: 0;
-    border-radius: 14px;
-    padding: 16px;
+.buttons button {
+    min-height: 56px;
+
+    border: none;
+
+    border-radius: 15px;
+
     font-size: 16px;
-    font-weight: bold;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s;
+}
+
+.buttons button:active {
+    transform: scale(0.97);
 }
 
 .start-button {
-    flex: 2;
-    background: #5b2c83;
     color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5e1a87,
+            #8e24aa
+        );
+
+    box-shadow:
+        0 5px 14px rgba(106, 27, 154, 0.25);
 }
 
 .stop-button {
-    flex: 1;
-    background: #e9e3ee;
-    color: #5b2c83;
+    color: #777;
+
+    background: #f7edf9;
+
+    border: 1px solid #ead9f0 !important;
 }
 
 .stop-button:disabled {
-    opacity: .5;
+    opacity: 0.55;
+
+    cursor: not-allowed;
 }
 
+
+/* ================================
+   RECOGNIZED TEXT
+   ================================ */
+
 .section-title {
-    font-weight: bold;
-    margin-bottom: 10px;
+    color: #5b2080;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    margin-bottom: 12px;
 }
 
 .recognized-text {
-    background: #f8f5fa;
-    padding: 15px;
-    border-radius: 12px;
-    min-height: 55px;
+    width: 100%;
+
+    min-height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 12px;
+
+    background: #faf5fd;
+
+    border-radius: 13px;
+
+    color: #777;
+
+    font-size: 14px;
+
     line-height: 1.6;
 }
 
+
+/* ================================
+   COMPLETE CARD
+   ================================ */
+
 .complete-card {
     display: none;
+
     text-align: center;
-    border: 2px solid #d8c2e4;
+
+    border: 2px solid #d8b5e8;
 }
 
 .complete-icon {
-    font-size: 45px;
+    font-size: 48px;
+
+    margin-bottom: 8px;
 }
 
 .complete-card h2 {
-    color: #5b2c83;
-    margin: 10px 0;
+    color: #6a1b9a;
+
+    font-size: 25px;
+
+    margin-bottom: 8px;
+}
+
+.complete-card p {
+    color: #666;
+
+    line-height: 1.7;
+
+    margin-bottom: 18px;
 }
 
 .reset-button {
-    width: 100%;
-    margin-top: 15px;
-    background: #5b2c83;
+    border: none;
+
+    border-radius: 13px;
+
+    padding: 13px 22px;
+
+    background: #6a1b9a;
+
     color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
 }
 
+
+/* ================================
+   INFO
+   ================================ */
+
 .info h3 {
+    color: #5b2080;
+
+    font-size: 18px;
+
     margin-bottom: 12px;
 }
 
 .info ol {
-    padding-left: 22px;
+    padding-left: 23px;
+
+    color: #666;
+
+    line-height: 2;
+
+    font-size: 14px;
 }
 
-.info li {
-    margin-bottom: 9px;
-    line-height: 1.5;
-    color: #666;
-}
+
+/* ================================
+   FOOTER
+   ================================ */
 
 footer {
+    width: 100%;
+
     text-align: center;
-    color: #777;
-    padding: 25px;
-    font-size: 13px;
+
+    color: #8b6b9b;
+
+    padding:
+        15px
+        16px
+        35px;
+
+    font-size: 14px;
+
+    line-height: 1.8;
 }
+
+footer small {
+    font-size: 12px;
+}
+
+
+/* ================================
+   TABLET
+   ================================ */
+
+@media (min-width: 600px) {
+
+    main {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .card {
+        border-radius: 24px;
+    }
+
+}
+
+
+/* ================================
+   DESKTOP / WEB
+   ================================ */
+
+@media (min-width: 900px) {
+
+    body {
+        font-size: 16px;
+    }
+
+    .app-header {
+        padding-top: 28px;
+        padding-bottom: 26px;
+    }
+
+    main {
+        max-width: 760px;
+
+        padding-top: 32px;
+    }
+
+    .card {
+        padding: 30px;
+    }
+
+}
+
+
+/* ================================
+   SMALL MOBILE
+   ================================ */
+
+@media (max-width: 380px) {
+
+    main {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+    .card {
+        padding: 15px;
+        border-radius: 18px;
+    }
+
+    .targets {
+        gap: 7px;
+    }
+
+    .targets button {
+        min-height: 47px;
+        font-size: 15px;
+    }
+
+    .buttons {
+        gap: 8px;
+    }
+
+    .buttons button {
+        font-size: 14px;
+    }
+
+}
+
+
+/* ================================
+   SAFE AREA FOR PHONES
+   ================================ */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+
+    main {
+        padding-bottom:
+            calc(40px + env(safe-area-inset-bottom));
+    }
+
+    footer {
+        padding-bottom:
+            calc(35px + env(safe-area-inset-bottom));
+    }
+
+}
+
+
+/* ================================
+   REMOVE TAP HIGHLIGHT
+   ================================ */
+
+button,
+input {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ================================
+   ACCESSIBILITY
+   ================================ */
+
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(106, 27, 154, 0.25);
+
+    outline-offset: 2px;
+    }
