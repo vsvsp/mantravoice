@@ -157,7 +157,7 @@ function createRecognition() {
             );
 
 
-            if (score === 1) {
+            if (score >= 0.90) {
 
                 addCount();
 
@@ -249,7 +249,7 @@ function normalize(text) {
 
 
 /* ==============================
-   STRICT MANTRA MATCHING
+   MATCHING
 ============================== */
 
 function calculateScore(
@@ -263,14 +263,12 @@ function calculateScore(
 
 
     /*
-       Spaces తొలగిస్తాం.
+       Spaces తొలగించడం.
 
        ఓం నమఃశివాయ
-
        ఓం నమః శివాయ
 
        రెండూ:
-
        ఓంనమఃశివాయ
     */
 
@@ -292,11 +290,7 @@ function calculateScore(
 
 
     /*
-       STRICT EXACT MATCH
-
-       Target మరియు Voice
-       పూర్తిగా ఒకటే అయితే మాత్రమే
-       Count.
+       Exact match
     */
 
     if (
@@ -309,13 +303,121 @@ function calculateScore(
 
 
     /*
-       అదనపు మాటలు,
-       తక్కువ మాటలు,
-       వేరే మాటలు
-       అన్నీ reject.
+       Speech recognitionలో
+       చిన్న spelling difference
+       మాత్రమే allow.
     */
 
+    const distance =
+        levenshteinDistance(
+            targetText,
+            spokenText
+        );
+
+
+    const maxLength =
+        Math.max(
+            targetText.length,
+            spokenText.length
+        );
+
+
+    if (maxLength === 0) {
+        return 1;
+    }
+
+
+    const similarity =
+        1 -
+        (
+            distance /
+            maxLength
+        );
+
+
+    /*
+       90% లేదా అంతకంటే ఎక్కువ
+       match అయితే మాత్రమే count.
+    */
+
+    if (similarity >= 0.90) {
+        return 1;
+    }
+
+
     return 0;
+}
+
+
+/* ==============================
+   LEVENSHTEIN
+============================== */
+
+function levenshteinDistance(
+    a,
+    b
+) {
+
+    const matrix = [];
+
+
+    for (
+        let i = 0;
+        i <= b.length;
+        i++
+    ) {
+
+        matrix[i] = [i];
+    }
+
+
+    for (
+        let j = 0;
+        j <= a.length;
+        j++
+    ) {
+
+        matrix[0][j] = j;
+    }
+
+
+    for (
+        let i = 1;
+        i <= b.length;
+        i++
+    ) {
+
+        for (
+            let j = 1;
+            j <= a.length;
+            j++
+        ) {
+
+            if (
+                b.charAt(i - 1) ===
+                a.charAt(j - 1)
+            ) {
+
+                matrix[i][j] =
+                    matrix[i - 1][j - 1];
+
+            } else {
+
+                matrix[i][j] =
+                    Math.min(
+
+                        matrix[i - 1][j - 1] + 1,
+
+                        matrix[i][j - 1] + 1,
+
+                        matrix[i - 1][j] + 1
+                    );
+            }
+        }
+    }
+
+
+    return matrix[b.length][a.length];
 }
 
 
@@ -518,19 +620,11 @@ function addCount() {
     );
 
 
-    /*
-       Vibration
-    */
-
     if (navigator.vibrate) {
 
         navigator.vibrate(60);
     }
 
-
-    /*
-       Complete
-    */
 
     if (count >= target) {
 
