@@ -113,19 +113,11 @@ function createRecognition() {
                 spoken;
 
 
-            /*
-              User టైప్ చేసిన మంత్రం
-            */
-
             const mantra =
                 normalize(
                     mantraInput.value
                 );
 
-
-            /*
-              Voiceలో వచ్చిన text
-            */
 
             const speech =
                 normalize(
@@ -165,11 +157,7 @@ function createRecognition() {
             );
 
 
-            /*
-              Match అయితే Count
-            */
-
-            if (score >= 0.80) {
+            if (score === 1) {
 
                 addCount();
 
@@ -183,7 +171,7 @@ function createRecognition() {
             } else {
 
                 statusDisplay.innerText =
-                    "🔎 మంత్రం కాదు — Count మారలేదు";
+                    "🔎 మంత్రం సరిపోలలేదు — Count మారలేదు";
             }
         };
 
@@ -261,7 +249,7 @@ function normalize(text) {
 
 
 /* ==============================
-   MANTRA MATCHING
+   STRICT MANTRA MATCHING
 ============================== */
 
 function calculateScore(
@@ -275,17 +263,15 @@ function calculateScore(
 
 
     /*
-      Spaces remove చేస్తాం.
+       Spaces తొలగిస్తాం.
 
-      ఉదాహరణ:
+       ఓం నమఃశివాయ
 
-      ఓం నమఃశివాయ
+       ఓం నమః శివాయ
 
-      ఓం నమః శివాయ
+       రెండూ:
 
-      రెండూ:
-
-      ఓంనమఃశివాయ
+       ఓంనమఃశివాయ
     */
 
     const targetText =
@@ -300,8 +286,17 @@ function calculateScore(
         .trim();
 
 
+    if (!targetText || !spokenText) {
+        return 0;
+    }
+
+
     /*
-      Exact match
+       STRICT EXACT MATCH
+
+       Target మరియు Voice
+       పూర్తిగా ఒకటే అయితే మాత్రమే
+       Count.
     */
 
     if (
@@ -314,126 +309,13 @@ function calculateScore(
 
 
     /*
-      Voice textలో target
-      పూర్తిగా ఉంటే match
+       అదనపు మాటలు,
+       తక్కువ మాటలు,
+       వేరే మాటలు
+       అన్నీ reject.
     */
 
-    if (
-        spokenText.includes(
-            targetText
-        )
-    ) {
-
-        return 1;
-    }
-
-
-    /*
-      Target text voice textలో
-      చిన్న differenceతో ఉంటే
-      similarity check.
-    */
-
-    const distance =
-        levenshteinDistance(
-            targetText,
-            spokenText
-        );
-
-
-    const maxLength =
-        Math.max(
-            targetText.length,
-            spokenText.length
-        );
-
-
-    if (maxLength === 0) {
-        return 1;
-    }
-
-
-    const score =
-        1 -
-        (
-            distance /
-            maxLength
-        );
-
-
-    return score;
-}
-
-
-/* ==============================
-   LEVENSHTEIN DISTANCE
-============================== */
-
-function levenshteinDistance(
-    a,
-    b
-) {
-
-    const matrix = [];
-
-
-    for (
-        let i = 0;
-        i <= b.length;
-        i++
-    ) {
-
-        matrix[i] = [i];
-    }
-
-
-    for (
-        let j = 0;
-        j <= a.length;
-        j++
-    ) {
-
-        matrix[0][j] = j;
-    }
-
-
-    for (
-        let i = 1;
-        i <= b.length;
-        i++
-    ) {
-
-        for (
-            let j = 1;
-            j <= a.length;
-            j++
-        ) {
-
-            if (
-                b.charAt(i - 1) ===
-                a.charAt(j - 1)
-            ) {
-
-                matrix[i][j] =
-                    matrix[i - 1][j - 1];
-
-            } else {
-
-                matrix[i][j] =
-                    Math.min(
-
-                        matrix[i - 1][j - 1] + 1,
-
-                        matrix[i][j - 1] + 1,
-
-                        matrix[i - 1][j] + 1
-                    );
-            }
-        }
-    }
-
-
-    return matrix[b.length][a.length];
+    return 0;
 }
 
 
@@ -578,7 +460,7 @@ function stopMantra() {
 
 
 /* ==============================
-   ADD COUNT
+   ADD COUNT + SAVE
 ============================== */
 
 function addCount() {
@@ -607,7 +489,7 @@ function addCount() {
 
 
     /*
-      Save count
+       Save count
     */
 
     localStorage.setItem(
@@ -617,7 +499,7 @@ function addCount() {
 
 
     /*
-      Save mantra
+       Save mantra
     */
 
     localStorage.setItem(
@@ -627,7 +509,7 @@ function addCount() {
 
 
     /*
-      Save target
+       Save target
     */
 
     localStorage.setItem(
@@ -636,11 +518,19 @@ function addCount() {
     );
 
 
+    /*
+       Vibration
+    */
+
     if (navigator.vibrate) {
 
         navigator.vibrate(60);
     }
 
+
+    /*
+       Complete
+    */
 
     if (count >= target) {
 
@@ -798,10 +688,6 @@ function loadSavedData() {
         );
 
 
-    /*
-      Load count
-    */
-
     if (savedCount !== null) {
 
         count =
@@ -810,10 +696,6 @@ function loadSavedData() {
             ) || 0;
     }
 
-
-    /*
-      Load mantra
-    */
 
     if (
         savedMantra !== null &&
@@ -824,10 +706,6 @@ function loadSavedData() {
             savedMantra;
     }
 
-
-    /*
-      Load target
-    */
 
     if (savedTarget !== null) {
 
