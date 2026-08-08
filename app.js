@@ -49,21 +49,89 @@ const completeMessage =
 
 
 /* =========================
-   INITIALIZE
+   INITIALIZE / RESUME
 ========================= */
 
-count = 0;
+const savedCount =
+    parseInt(
+        localStorage.getItem("mantraCount")
+    );
 
-localStorage.removeItem("mantraCount");
+const savedTarget =
+    parseInt(
+        localStorage.getItem("mantraTarget")
+    );
 
-target =
-    parseInt(targetInput.value) || 1100;
+const savedMantra =
+    localStorage.getItem("mantraText");
 
-countDisplay.innerText = "0";
 
-targetDisplay.innerText = target;
+/* Restore mantra */
 
-progressBar.style.width = "0%";
+if (savedMantra) {
+
+    mantraInput.value =
+        savedMantra;
+}
+
+
+/* Restore target */
+
+if (
+    savedTarget &&
+    savedTarget > 0
+) {
+
+    target =
+        savedTarget;
+
+    targetInput.value =
+        savedTarget;
+
+} else {
+
+    target =
+        parseInt(
+            targetInput.value
+        ) || 1100;
+}
+
+
+/* Restore count */
+
+if (
+    !isNaN(savedCount) &&
+    savedCount >= 0
+) {
+
+    count =
+        savedCount;
+
+} else {
+
+    count = 0;
+}
+
+
+/* Display */
+
+countDisplay.innerText =
+    count;
+
+targetDisplay.innerText =
+    target;
+
+
+/* Progress */
+
+const initialPercentage =
+    Math.min(
+        (count / target) * 100,
+        100
+    );
+
+progressBar.style.width =
+    initialPercentage + "%";
 
 
 /* =========================
@@ -80,17 +148,6 @@ function cleanText(text) {
 }
 
 
-/*
-   Spaces completely remove.
-   
-   ఉదాహరణ:
-
-   ఓం నమఃశివాయ
-   ఓం నమః శివాయ
-
-   రెండూ sameగా మారతాయి.
-*/
-
 function compactText(text) {
 
     return cleanText(text)
@@ -99,7 +156,7 @@ function compactText(text) {
 
 
 /* =========================
-   TELUGU WORD NORMALIZATION
+   WORD NORMALIZATION
 ========================= */
 
 function normalizeWords(text) {
@@ -144,9 +201,7 @@ function isMantraMatch(
     }
 
 
-    /*
-      1. Exact match
-    */
+    /* Exact match */
 
     if (
         targetCompact ===
@@ -157,15 +212,7 @@ function isMantraMatch(
     }
 
 
-    /*
-      2. Voice recognition sometimes
-         changes spaces between Telugu words.
-
-         Example:
-
-         ఓం నమఃశివాయ
-         ఓం నమః శివాయ
-    */
+    /* Word matching */
 
     const targetWords =
         normalizeWords(mantra);
@@ -173,10 +220,6 @@ function isMantraMatch(
     const voiceWords =
         normalizeWords(voice);
 
-
-    /*
-      Compare word combinations.
-    */
 
     const targetJoined =
         targetWords.join("");
@@ -194,12 +237,6 @@ function isMantraMatch(
     }
 
 
-    /*
-      3. Small recognition differences.
-      
-      Every important word should appear.
-    */
-
     let matchedWords = 0;
 
 
@@ -211,7 +248,6 @@ function isMantraMatch(
 
         const targetWord =
             targetWords[i];
-
 
         let found = false;
 
@@ -235,11 +271,6 @@ function isMantraMatch(
                 break;
             }
 
-
-            /*
-              One word may have been
-              joined/split by recognition.
-            */
 
             if (
                 voiceCompact.includes(
@@ -265,7 +296,9 @@ function isMantraMatch(
       all words must match.
     */
 
-    if (targetWords.length <= 2) {
+    if (
+        targetWords.length <= 2
+    ) {
 
         return (
             matchedWords ===
@@ -276,7 +309,7 @@ function isMantraMatch(
 
     /*
       Longer mantra:
-      at least 75% words match.
+      75% words match.
     */
 
     return (
@@ -329,9 +362,9 @@ function createRecognition() {
         false;
 
 
-    /*
-      Start
-    */
+    /* =====================
+       START
+    ===================== */
 
     recognition.onstart =
         function() {
@@ -340,18 +373,20 @@ function createRecognition() {
 
             restarting = false;
 
-            startBtn.disabled = true;
+            startBtn.disabled =
+                true;
 
-            stopBtn.disabled = false;
+            stopBtn.disabled =
+                false;
 
             statusDisplay.innerText =
                 "🎤 వింటున్నాను... మంత్రం పలకండి";
         };
 
 
-    /*
-      Result
-    */
+    /* =====================
+       RESULT
+    ===================== */
 
     recognition.onresult =
         function(event) {
@@ -367,16 +402,12 @@ function createRecognition() {
             }
 
 
-            /*
-              Show recognized voice
-            */
-
             recognizedText.innerText =
                 spoken;
 
 
             /*
-              Prevent duplicate result
+              Duplicate protection
             */
 
             const now =
@@ -428,10 +459,6 @@ function createRecognition() {
             );
 
 
-            /*
-              Check mantra
-            */
-
             const matched =
                 isMantraMatch(
                     mantra,
@@ -456,9 +483,9 @@ function createRecognition() {
         };
 
 
-    /*
-      Error
-    */
+    /* =====================
+       ERROR
+    ===================== */
 
     recognition.onerror =
         function(event) {
@@ -480,7 +507,8 @@ function createRecognition() {
                 "service-not-allowed"
             ) {
 
-                keepListening = false;
+                keepListening =
+                    false;
 
                 startBtn.disabled =
                     false;
@@ -502,9 +530,9 @@ function createRecognition() {
         };
 
 
-    /*
-      End
-    */
+    /* =====================
+       END
+    ===================== */
 
     recognition.onend =
         function() {
@@ -616,16 +644,33 @@ function startMantra() {
         target;
 
 
-    keepListening = true;
+    /*
+      Save target
+    */
+
+    localStorage.setItem(
+        "mantraTarget",
+        String(target)
+    );
+
+
+    /*
+      Save mantra
+    */
+
+    localStorage.setItem(
+        "mantraText",
+        mantraInput.value
+    );
+
+
+    keepListening =
+        true;
 
 
     completeCard.style.display =
         "none";
 
-
-    /*
-      New session duplicate protection
-    */
 
     lastProcessedSpeech = "";
 
@@ -651,9 +696,11 @@ function startMantra() {
 
 function stopMantra() {
 
-    keepListening = false;
+    keepListening =
+        false;
 
-    restarting = false;
+    restarting =
+        false;
 
 
     if (recognition) {
@@ -669,12 +716,15 @@ function stopMantra() {
     }
 
 
-    listening = false;
+    listening =
+        false;
 
 
-    startBtn.disabled = false;
+    startBtn.disabled =
+        false;
 
-    stopBtn.disabled = true;
+    stopBtn.disabled =
+        true;
 
 
     statusDisplay.innerText =
@@ -688,7 +738,9 @@ function stopMantra() {
 
 function addCount() {
 
-    if (count >= target) {
+    if (
+        count >= target
+    ) {
 
         return;
     }
@@ -713,7 +765,7 @@ function addCount() {
 
 
     /*
-      Save
+      SAVE COUNT
     */
 
     localStorage.setItem(
@@ -722,11 +774,19 @@ function addCount() {
     );
 
 
+    /*
+      SAVE MANTRA
+    */
+
     localStorage.setItem(
         "mantraText",
         mantraInput.value
     );
 
+
+    /*
+      SAVE TARGET
+    */
 
     localStorage.setItem(
         "mantraTarget",
@@ -747,7 +807,7 @@ function addCount() {
 
 
     /*
-      Target reached
+      Target complete
     */
 
     if (
@@ -765,7 +825,8 @@ function addCount() {
 
 function completeJapam() {
 
-    keepListening = false;
+    keepListening =
+        false;
 
 
     if (recognition) {
@@ -781,12 +842,15 @@ function completeJapam() {
     }
 
 
-    listening = false;
+    listening =
+        false;
 
 
-    startBtn.disabled = false;
+    startBtn.disabled =
+        false;
 
-    stopBtn.disabled = true;
+    stopBtn.disabled =
+        true;
 
 
     completeCard.style.display =
@@ -816,7 +880,7 @@ function completeJapam() {
 
 
 /* =========================
-   RESET
+   RESET JAPAM
 ========================= */
 
 function resetJapam() {
@@ -871,6 +935,12 @@ function setTarget(value) {
         target;
 
 
+    localStorage.setItem(
+        "mantraTarget",
+        String(target)
+    );
+
+
     resetJapam();
 }
 
@@ -891,6 +961,12 @@ targetInput.addEventListener(
 
         targetDisplay.innerText =
             target;
+
+
+        localStorage.setItem(
+            "mantraTarget",
+            String(target)
+        );
     }
 );
 
