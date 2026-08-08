@@ -1,155 +1,328 @@
 <!DOCTYPE html>
 <html lang="te">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#5b2c83">
+    <meta charset="UTF-8">
 
-<title>MantraVoice</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+    <meta name="theme-color"
+          content="#6A1B9A">
+
+    <meta name="description"
+          content="MantraVoice - మీ మంత్ర జపాన్ని Voice ద్వారా గుర్తించి లెక్కించే యాప్">
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="icon"
+          type="image/png"
+          href="icon-192.png">
+
+    <title>MantraVoice</title>
+
+    <link rel="stylesheet"
+          href="style.css">
 </head>
+
 
 <body>
 
-<header>
-    <div class="logo">🕉️ MantraVoice</div>
+<header class="app-header">
+
+    <div class="logo">
+        🕉️ <span>MantraVoice</span>
+    </div>
+
     <div class="tagline">
         జపం మీ స్వరం… లెక్క మా బాధ్యత
     </div>
+
 </header>
+
 
 <main>
 
-<section class="intro">
-    <h1>🙏 మంత్ర జపం ప్రారంభించండి</h1>
-    <p>
-        మీరు మంత్రం పలకండి.<br>
-        MantraVoice మీ జపాన్ని గుర్తించి automaticగా count చేస్తుంది.
-    </p>
-</section>
+    <!-- INTRO -->
 
-<section class="card">
+    <section class="intro">
 
-    <label for="mantra">🕉️ మీ మంత్రం</label>
+        <h1>
+            🙏 మంత్ర జపం ప్రారంభించండి
+        </h1>
 
-    <input
-        id="mantra"
-        type="text"
-        value="సాంబ సదాశివాయ నమః"
-        placeholder="మీ మంత్రాన్ని ఇక్కడ టైప్ చేయండి">
+        <p>
+            మీరు మంత్రం పలకండి.<br>
+            MantraVoice మీ జపాన్ని గుర్తించి
+            automaticగా count చేస్తుంది.
+        </p>
 
-    <label for="target">🎯 Target</label>
+    </section>
 
-    <input
-        id="target"
-        type="number"
-        value="1100"
-        min="1">
 
-    <div class="targets">
-        <button onclick="setTarget(11)">11</button>
-        <button onclick="setTarget(21)">21</button>
-        <button onclick="setTarget(54)">54</button>
-        <button onclick="setTarget(108)">108</button>
-        <button onclick="setTarget(1008)">1008</button>
-        <button onclick="setTarget(1100)">1100</button>
-    </div>
+    <!-- MANTRA SETTINGS -->
 
-</section>
+    <section class="card">
 
-<section class="card counter">
+        <label for="mantra">
+            🕉️ మీ మంత్రం
+        </label>
 
-    <div class="small">ప్రస్తుత జపం</div>
+        <input
+            id="mantra"
+            type="text"
+            value="సాంబ సదాశివాయ నమః"
+            placeholder="మీ మంత్రాన్ని ఇక్కడ టైప్ చేయండి">
 
-    <div id="count" class="count">0</div>
 
-    <div class="target">
-        / <span id="targetDisplay">1100</span>
-    </div>
+        <label for="target">
+            🎯 Target
+        </label>
 
-    <div class="progress">
-        <div id="progressBar" class="progress-bar"></div>
-    </div>
+        <input
+            id="target"
+            type="number"
+            value="1100"
+            min="1">
 
-    <div id="status" class="status">
-        🎤 Start నొక్కి మంత్రం పలకండి
-    </div>
 
-</section>
+        <div class="targets">
 
-<section class="buttons">
+            <button onclick="setTarget(11)">
+                11
+            </button>
 
-    <button
-        id="startBtn"
-        class="start-button"
-        onclick="startMantra()">
-        🎤 Start Japam
-    </button>
+            <button onclick="setTarget(21)">
+                21
+            </button>
 
-    <button
-        id="stopBtn"
-        class="stop-button"
-        onclick="stopMantra()"
-        disabled>
-        ⏹ Stop
-    </button>
+            <button onclick="setTarget(54)">
+                54
+            </button>
 
-</section>
+            <button onclick="setTarget(108)">
+                108
+            </button>
 
-<section class="card">
+            <button onclick="setTarget(1008)">
+                1008
+            </button>
 
-    <div class="section-title">
-        🎤 మీరు చెప్పింది
-    </div>
+            <button onclick="setTarget(1100)">
+                1100
+            </button>
 
-    <div id="recognizedText" class="recognized-text">
-        Microphone ప్రారంభించిన తర్వాత
-        మీ మాట ఇక్కడ కనిపిస్తుంది.
-    </div>
+        </div>
 
-</section>
+    </section>
 
-<section
-    id="completeCard"
-    class="card complete-card">
 
-    <div class="complete-icon">🙏</div>
+    <!-- COUNTER -->
 
-    <h2>జపం పూర్తయింది!</h2>
+    <section class="card counter">
 
-    <p id="completeMessage"></p>
+        <div class="small">
+            ప్రస్తుత జపం
+        </div>
 
-    <button
-        class="reset-button"
-        onclick="resetJapam()">
-        🔄 మళ్లీ ప్రారంభించండి
-    </button>
+        <div id="count"
+             class="count">
+            0
+        </div>
 
-</section>
+        <div class="target">
+            /
+            <span id="targetDisplay">
+                1100
+            </span>
+        </div>
 
-<section class="card info">
 
-    <h3>ℹ️ ఎలా ఉపయోగించాలి?</h3>
+        <div class="progress">
 
-    <ol>
-        <li>మీ మంత్రాన్ని నమోదు చేయండి.</li>
-        <li>Target ఎంచుకోండి.</li>
-        <li>🎤 Start Japam నొక్కండి.</li>
-        <li>మంత్రాన్ని స్పష్టంగా పలకండి.</li>
-        <li>మంత్రం గుర్తించినప్పుడు count పెరుగుతుంది.</li>
-    </ol>
+            <div id="progressBar"
+                 class="progress-bar">
+            </div>
 
-</section>
+        </div>
+
+
+        <div id="status"
+             class="status">
+
+            🎤 Start నొక్కి మంత్రం పలకండి
+
+        </div>
+
+    </section>
+
+
+    <!-- START / STOP -->
+
+    <section class="buttons">
+
+        <button
+            id="startBtn"
+            class="start-button"
+            onclick="startMantra()">
+
+            🎤 Start Japam
+
+        </button>
+
+
+        <button
+            id="stopBtn"
+            class="stop-button"
+            onclick="stopMantra()"
+            disabled>
+
+            ⏹ Stop
+
+        </button>
+
+    </section>
+
+
+    <!-- RECOGNIZED VOICE -->
+
+    <section class="card">
+
+        <div class="section-title">
+            🎤 మీరు చెప్పింది
+        </div>
+
+        <div id="recognizedText"
+             class="recognized-text">
+
+            Microphone ప్రారంభించిన తర్వాత
+            మీ మాట ఇక్కడ కనిపిస్తుంది.
+
+        </div>
+
+    </section>
+
+
+    <!-- COMPLETE -->
+
+    <section
+        id="completeCard"
+        class="card complete-card">
+
+        <div class="complete-icon">
+            🙏
+        </div>
+
+        <h2>
+            జపం పూర్తయింది!
+        </h2>
+
+        <p id="completeMessage"></p>
+
+        <button
+            class="reset-button"
+            onclick="resetJapam()">
+
+            🔄 మళ్లీ ప్రారంభించండి
+
+        </button>
+
+    </section>
+
+
+    <!-- HELP -->
+
+    <section class="card info">
+
+        <h3>
+            ℹ️ ఎలా ఉపయోగించాలి?
+        </h3>
+
+        <ol>
+
+            <li>
+                మీ మంత్రాన్ని నమోదు చేయండి.
+            </li>
+
+            <li>
+                Target ఎంచుకోండి.
+            </li>
+
+            <li>
+                🎤 Start Japam నొక్కండి.
+            </li>
+
+            <li>
+                Microphone permission
+                Allow చేయండి.
+            </li>
+
+            <li>
+                మంత్రాన్ని స్పష్టంగా పలకండి.
+            </li>
+
+            <li>
+                మంత్రం గుర్తించినప్పుడు
+                count పెరుగుతుంది.
+            </li>
+
+        </ol>
+
+    </section>
 
 </main>
 
+
 <footer>
-    🕉️ MantraVoice<br>
-    జపం మీ స్వరం… లెక్క మా బాధ్యత
+
+    <div>
+        🕉️ MantraVoice
+    </div>
+
+    <small>
+        జపం మీ స్వరం… లెక్క మా బాధ్యత
+    </small>
+
 </footer>
+
 
 <script src="app.js"></script>
 
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+        "load",
+        function () {
+
+            navigator.serviceWorker
+                .register("sw.js")
+                .then(function () {
+
+                    console.log(
+                        "MantraVoice Service Worker Registered"
+                    );
+
+                })
+                .catch(function (error) {
+
+                    console.log(
+                        "Service Worker Error:",
+                        error
+                    );
+
+                });
+
+        }
+    );
+
+}
+
+</script>
+
+
 </body>
+
 </html>
