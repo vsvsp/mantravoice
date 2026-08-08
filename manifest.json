@@ -3,9 +3,24 @@
   "short_name": "MantraVoice",
   "description": "జపం మీ స్వరం… లెక్క మా బాధ్యత",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#5b2c83",
   "orientation": "portrait",
-  "lang": "te-IN"
+  "background_color": "#faf4ff",
+  "theme_color": "#6A1B9A",
+  "lang": "te",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
