@@ -57,23 +57,52 @@ count = 0;
 target =
     parseInt(targetInput.value) || 1100;
 
-countDisplay.innerText = "0";
+countDisplay.innerText =
+    "0";
 
 targetDisplay.innerText =
     target;
 
-progressBar.style.width = "0%";
+progressBar.style.width =
+    "0%";
 
 
 /* =========================
-   NORMALIZE TEXT
+   NORMALIZE MANTRA
 ========================= */
 
-function normalizeText(text) {
+function normalizeMantra(text) {
 
     return String(text || "")
-        .trim()
-        .replace(/\s+/g, "");
+        .toLowerCase()
+
+        // punctuation remove
+        .replace(
+            /[.,!?;:"'`।॥,]/g,
+            ""
+        )
+
+        // spaces remove
+        .replace(/\s+/g, "")
+
+        .trim();
+}
+
+
+/* =========================
+   WORD NORMALIZATION
+========================= */
+
+function getWords(text) {
+
+    return String(text || "")
+        .toLowerCase()
+        .replace(
+            /[.,!?;:"'`।॥,]/g,
+            ""
+        )
+        .split(/\s+/)
+        .filter(Boolean);
 }
 
 
@@ -86,35 +115,248 @@ function isMantraMatch(
     voice
 ) {
 
-    const a =
-        normalizeText(mantra);
-
-    const b =
-        normalizeText(voice);
+    if (!mantra || !voice) {
+        return false;
+    }
 
 
-    console.log(
-        "MANTRA =",
-        a
-    );
+    const targetText =
+        normalizeMantra(mantra);
 
-    console.log(
-        "VOICE =",
-        b
-    );
+    const spokenText =
+        normalizeMantra(voice);
 
 
-    if (!a || !b) {
+    if (
+        !targetText ||
+        !spokenText
+    ) {
+
         return false;
     }
 
 
     /*
-      Exact match after
-      removing spaces
+      Exact match
     */
 
-    return a === b;
+    if (
+        targetText ===
+        spokenText
+    ) {
+
+        return true;
+    }
+
+
+    /*
+      Word-based match
+    */
+
+    const targetWords =
+        getWords(mantra);
+
+    const spokenWords =
+        getWords(voice);
+
+
+    let matchedWords = 0;
+
+
+    for (
+        let i = 0;
+        i < targetWords.length;
+        i++
+    ) {
+
+        const word =
+            targetWords[i];
+
+        let found = false;
+
+
+        for (
+            let j = 0;
+            j < spokenWords.length;
+            j++
+        ) {
+
+            const spokenWord =
+                spokenWords[j];
+
+
+            /*
+              Exact word
+            */
+
+            if (
+                word ===
+                spokenWord
+            ) {
+
+                found = true;
+                break;
+            }
+
+
+            /*
+              Small speech difference
+            */
+
+            if (
+                getSimilarity(
+                    normalizeMantra(word),
+                    normalizeMantra(spokenWord)
+                ) >= 0.85
+            ) {
+
+                found = true;
+                break;
+            }
+        }
+
+
+        if (found) {
+
+            matchedWords++;
+        }
+    }
+
+
+    /*
+      Short mantra
+    */
+
+    if (
+        targetWords.length <= 2
+    ) {
+
+        return (
+            matchedWords ===
+            targetWords.length
+        );
+    }
+
+
+    /*
+      Longer mantra
+      at least 75% words
+    */
+
+    return (
+        matchedWords /
+        targetWords.length
+        >= 0.75
+    );
+}
+
+
+/* =========================
+   SIMILARITY
+========================= */
+
+function getSimilarity(a, b) {
+
+    if (!a || !b) {
+        return 0;
+    }
+
+
+    if (a === b) {
+        return 1;
+    }
+
+
+    const distance =
+        levenshtein(a, b);
+
+
+    const maxLength =
+        Math.max(
+            a.length,
+            b.length
+        );
+
+
+    if (maxLength === 0) {
+        return 1;
+    }
+
+
+    return (
+        1 -
+        distance /
+        maxLength
+    );
+}
+
+
+/* =========================
+   LEVENSHTEIN
+========================= */
+
+function levenshtein(a, b) {
+
+    const matrix = [];
+
+
+    for (
+        let i = 0;
+        i <= b.length;
+        i++
+    ) {
+
+        matrix[i] = [i];
+    }
+
+
+    for (
+        let j = 0;
+        j <= a.length;
+        j++
+    ) {
+
+        matrix[0][j] = j;
+    }
+
+
+    for (
+        let i = 1;
+        i <= b.length;
+        i++
+    ) {
+
+        for (
+            let j = 1;
+            j <= a.length;
+            j++
+        ) {
+
+            if (
+                b.charAt(i - 1) ===
+                a.charAt(j - 1)
+            ) {
+
+                matrix[i][j] =
+                    matrix[i - 1][j - 1];
+
+            } else {
+
+                matrix[i][j] =
+                    Math.min(
+
+                        matrix[i - 1][j - 1] + 1,
+
+                        matrix[i][j - 1] + 1,
+
+                        matrix[i - 1][j] + 1
+                    );
+            }
+        }
+    }
+
+
+    return matrix[b.length][a.length];
 }
 
 
@@ -152,13 +394,6 @@ function createRecognition() {
         "te-IN";
 
 
-    /*
-      ఒక్క result తీసుకుంటుంది.
-      result వచ్చిన తర్వాత
-      automaticగా కొత్త listening
-      ప్రారంభమవుతుంది.
-    */
-
     recognition.continuous =
         false;
 
@@ -177,6 +412,7 @@ function createRecognition() {
             listening = true;
 
             restarting = false;
+
 
             startBtn.disabled =
                 true;
@@ -209,7 +445,7 @@ function createRecognition() {
 
 
             /*
-              Recognized text చూపించు
+              Show recognized text
             */
 
             recognizedText.innerText =
@@ -226,7 +462,9 @@ function createRecognition() {
 
             if (
                 spoken === lastSpeech &&
-                now - lastSpeechTime < 1200
+                now -
+                lastSpeechTime <
+                1200
             ) {
 
                 return;
@@ -253,8 +491,20 @@ function createRecognition() {
             }
 
 
+            console.log(
+                "MANTRA:",
+                mantra
+            );
+
+
+            console.log(
+                "VOICE:",
+                spoken
+            );
+
+
             /*
-              MATCH
+              Match
             */
 
             if (
@@ -265,6 +515,7 @@ function createRecognition() {
             ) {
 
                 addCount();
+
 
                 statusDisplay.innerText =
                     "🙏 మంత్రం గుర్తించబడింది — Count " +
@@ -357,7 +608,7 @@ function createRecognition() {
 
 
 /* =========================
-   RESTART
+   AUTO RESTART
 ========================= */
 
 function restartRecognition() {
@@ -387,10 +638,6 @@ function restartRecognition() {
 
 
             try {
-
-                /*
-                  New recognition object
-                */
 
                 createRecognition();
 
@@ -511,7 +758,6 @@ function stopMantra() {
     startBtn.disabled =
         false;
 
-
     stopBtn.disabled =
         true;
 
@@ -527,7 +773,9 @@ function stopMantra() {
 
 function addCount() {
 
-    if (count >= target) {
+    if (
+        count >= target
+    ) {
 
         return;
     }
@@ -556,7 +804,7 @@ function addCount() {
 
 
     /*
-      Phone vibration
+      Vibration
     */
 
     if (
@@ -609,7 +857,6 @@ function completeJapam() {
 
     startBtn.disabled =
         false;
-
 
     stopBtn.disabled =
         true;
@@ -675,7 +922,7 @@ function resetJapam() {
 
 
 /* =========================
-   TARGET BUTTON
+   TARGET BUTTONS
 ========================= */
 
 function setTarget(value) {
@@ -725,8 +972,8 @@ mantraInput.addEventListener(
     function() {
 
         /*
-          కొత్త మంత్రం =
-          కొత్త counting session
+          New mantra =
+          new counting session
         */
 
         resetJapam();
