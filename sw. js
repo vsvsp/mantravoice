@@ -11,68 +11,102 @@ const FILES_TO_CACHE = [
 ];
 
 
-/* INSTALL */
+self.addEventListener(
+    "install",
+    function(event) {
 
-self.addEventListener("install", function(event) {
+        event.waitUntil(
 
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(function(cache) {
-                return cache.addAll(FILES_TO_CACHE);
-            })
-    );
+            caches.open(CACHE_NAME)
+                .then(
+                    function(cache) {
 
-    self.skipWaiting();
-});
-
-
-/* ACTIVATE */
-
-self.addEventListener("activate", function(event) {
-
-    event.waitUntil(
-
-        caches.keys().then(function(cacheNames) {
-
-            return Promise.all(
-
-                cacheNames.map(function(cacheName) {
-
-                    if (cacheName !== CACHE_NAME) {
-
-                        return caches.delete(cacheName);
+                        return cache.addAll(
+                            FILES_TO_CACHE
+                        );
 
                     }
+                )
 
-                })
+        );
 
-            );
+        self.skipWaiting();
 
-        })
-
-    );
-
-    self.clients.claim();
-});
+    }
+);
 
 
-/* FETCH */
+self.addEventListener(
+    "activate",
+    function(event) {
 
-self.addEventListener("fetch", function(event) {
+        event.waitUntil(
 
-    event.respondWith(
+            caches.keys()
+                .then(
+                    function(names) {
 
-        caches.match(event.request)
-            .then(function(response) {
+                        return Promise.all(
 
-                if (response) {
-                    return response;
-                }
+                            names
+                                .filter(
+                                    function(name) {
 
-                return fetch(event.request);
+                                        return (
+                                            name !==
+                                            CACHE_NAME
+                                        );
 
-            })
+                                    }
+                                )
+                                .map(
+                                    function(name) {
 
-    );
+                                        return caches.delete(
+                                            name
+                                        );
 
-});
+                                    }
+                                )
+
+                        );
+
+                    }
+                )
+
+        );
+
+        self.clients.claim();
+
+    }
+);
+
+
+self.addEventListener(
+    "fetch",
+    function(event) {
+
+        event.respondWith(
+
+            caches.match(event.request)
+                .then(
+                    function(response) {
+
+                        if (response) {
+
+                            return response;
+
+                        }
+
+
+                        return fetch(
+                            event.request
+                        );
+
+                    }
+                )
+
+        );
+
+    }
+);
