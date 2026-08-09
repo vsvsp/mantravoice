@@ -1,4 +1,4 @@
-const CACHE_NAME = "mantravoice-v1";
+const CACHE_NAME = "mantravoice-v2";
 
 const FILES_TO_CACHE = [
   "/mantravoice/",
