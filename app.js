@@ -1,170 +1,127 @@
-/* =========================================
-   MantraVoice - Voice Japam Counter
-   ========================================= */
+// ================================
+// MantraVoice - app.js
+// ================================
 
-let count = 0;
-let target = 1100;
 let recognition = null;
 let isListening = false;
 
-
-/* ==============================
-   ELEMENTS
-   ============================== */
+let count = 0;
+let target = 1100;
 
 const mantraInput = document.getElementById("mantra");
 const targetInput = document.getElementById("target");
 
-const countDisplay = document.getElementById("count");
+const countEl = document.getElementById("count");
 const targetDisplay = document.getElementById("targetDisplay");
-
 const progressBar = document.getElementById("progressBar");
-const statusDisplay = document.getElementById("status");
 
+const statusEl = document.getElementById("status");
 const recognizedText = document.getElementById("recognizedText");
 
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 
-const completeCard = document.getElementById("completeCard");
-const completeMessage = document.getElementById("completeMessage");
 
+// ================================
+// PAGE LOAD
+// ================================
 
-/* ==============================
-   INITIAL SETUP
-   ============================== */
-
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
     target = Number(targetInput.value) || 1100;
 
     updateDisplay();
 
-    if (completeCard) {
-        completeCard.style.display = "none";
-    }
+    setupSpeechRecognition();
 
 });
 
 
-/* ==============================
-   TARGET BUTTONS
-   ============================== */
+// ================================
+// TARGET BUTTONS
+// ================================
 
 function setTarget(value) {
 
     target = Number(value);
 
     targetInput.value = target;
+    targetDisplay.textContent = target;
 
     count = 0;
 
-    if (completeCard) {
-        completeCard.style.display = "none";
+    updateDisplay();
+
+    statusEl.textContent =
+        "🎯 Target " + target + " ఎంచుకున్నారు. Start Japam నొక్కండి.";
+
+}
+
+
+// ================================
+// TARGET INPUT CHANGE
+// ================================
+
+targetInput.addEventListener("input", () => {
+
+    let value = Number(targetInput.value);
+
+    if (!value || value < 1) {
+        value = 1;
+    }
+
+    target = value;
+
+    targetDisplay.textContent = target;
+
+    if (count > target) {
+        count = target;
     }
 
     updateDisplay();
 
-    if (statusDisplay) {
-        statusDisplay.textContent =
-            "🎯 Target " + target + " ఎంచుకున్నారు";
-    }
-
-}
+});
 
 
-/* ==============================
-   TARGET INPUT
-   ============================== */
+// ================================
+// SPEECH RECOGNITION
+// ================================
 
-if (targetInput) {
+function setupSpeechRecognition() {
 
-    targetInput.addEventListener("input", function () {
-
-        let value = Number(this.value);
-
-        if (!value || value < 1) {
-            value = 1;
-        }
-
-        target = value;
-
-        updateDisplay();
-
-    });
-
-}
-
-
-/* ==============================
-   DISPLAY UPDATE
-   ============================== */
-
-function updateDisplay() {
-
-    if (countDisplay) {
-        countDisplay.textContent = count;
-    }
-
-    if (targetDisplay) {
-        targetDisplay.textContent = target;
-    }
-
-    if (progressBar) {
-
-        let percentage = 0;
-
-        if (target > 0) {
-            percentage = (count / target) * 100;
-        }
-
-        percentage = Math.min(percentage, 100);
-
-        progressBar.style.width = percentage + "%";
-    }
-
-}
-
-
-/* ==============================
-   SPEECH RECOGNITION
-   ============================== */
-
-const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-
-function createRecognition() {
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
 
-        alert(
-            "మీ Browserలో Voice Recognition support లేదు. Chrome Browser ఉపయోగించండి."
-        );
+        statusEl.textContent =
+            "❌ ఈ browserలో Voice Recognition support లేదు.";
 
-        return null;
+        return;
+
     }
 
+    recognition = new SpeechRecognition();
 
-    const rec = new SpeechRecognition();
+    recognition.lang = "te-IN";
 
-    rec.lang = "te-IN";
+    recognition.continuous = true;
 
-    rec.continuous = true;
+    recognition.interimResults = true;
 
-    rec.interimResults = true;
-
-    rec.maxAlternatives = 1;
+    recognition.maxAlternatives = 3;
 
 
-    /* ==========================
-       RESULT
-       ========================== */
+    // ============================
+    // RESULT
+    // ============================
 
-    rec.onresult = function (event) {
+    recognition.onresult = function(event) {
 
         let finalText = "";
+
+        let interimText = "";
 
         for (
             let i = event.resultIndex;
@@ -172,369 +129,391 @@ function createRecognition() {
             i++
         ) {
 
-            const result = event.results[i];
+            const text =
+                event.results[i][0].transcript;
 
-            const text = result[0].transcript;
-
-            if (result.isFinal) {
+            if (event.results[i].isFinal) {
 
                 finalText += text;
 
+            } else {
+
+                interimText += text;
+
             }
 
         }
 
 
-        if (finalText.trim() !== "") {
+        const displayText =
+            finalText || interimText;
+
+        if (displayText) {
 
             recognizedText.textContent =
-                "🗣️ " + finalText.trim();
+                displayText;
+
+        }
 
 
-            /*
-             * Every confirmed voice phrase
-             * = one Japam count
-             */
+        // Final voice వచ్చినప్పుడు count
+        if (finalText.trim()) {
 
-            addCount();
+            checkMantra(finalText);
 
         }
 
     };
 
 
-    /* ==========================
-       START
-       ========================== */
+    // ============================
+    // START
+    // ============================
 
-    rec.onstart = function () {
+    recognition.onstart = function() {
 
         isListening = true;
 
-        if (statusDisplay) {
+        startBtn.disabled = true;
 
-            statusDisplay.textContent =
-                "🎤 వింటోంది... మంత్రం పలకండి";
+        stopBtn.disabled = false;
 
-        }
-
-        if (startBtn) {
-            startBtn.disabled = true;
-        }
-
-        if (stopBtn) {
-            stopBtn.disabled = false;
-        }
+        statusEl.textContent =
+            "🎤 వింటున్నాను... మంత్రం పలకండి.";
 
     };
 
 
-    /* ==========================
-       END
-       ========================== */
+    // ============================
+    // END
+    // ============================
 
-    rec.onend = function () {
+    recognition.onend = function() {
 
         isListening = false;
 
-        if (startBtn) {
-            startBtn.disabled = false;
-        }
+        startBtn.disabled = false;
 
-        if (stopBtn) {
-            stopBtn.disabled = true;
-        }
+        stopBtn.disabled = true;
 
+        if (count < target) {
 
-        /*
-         * Target complete అయితే restart చేయకూడదు
-         */
-
-        if (count >= target) {
-            return;
-        }
-
-
-        /*
-         * Browser recognition కొన్ని seconds
-         * తర్వాత automatically stop చేస్తుంది.
-         * అందుకే మళ్లీ start చేస్తాం.
-         */
-
-        if (recognition === rec) {
-
-            try {
-
-                rec.start();
-
-            } catch (error) {
-
-                console.log(
-                    "Recognition restart:",
-                    error
-                );
-
-            }
+            statusEl.textContent =
+                "🎤 Start నొక్కి మళ్లీ మంత్రం పలకండి.";
 
         }
 
     };
 
 
-    /* ==========================
-       ERROR
-       ========================== */
+    // ============================
+    // ERROR
+    // ============================
 
-    rec.onerror = function (event) {
+    recognition.onerror = function(event) {
 
-        console.log(
-            "Speech Recognition Error:",
-            event.error
-        );
+        console.log("Speech Error:", event.error);
+
+        isListening = false;
+
+        startBtn.disabled = false;
+
+        stopBtn.disabled = true;
 
 
         if (event.error === "not-allowed") {
 
-            if (statusDisplay) {
-
-                statusDisplay.textContent =
-                    "⚠️ Microphone permission ఇవ్వండి";
-
-            }
+            statusEl.textContent =
+                "🎤 Microphone permission Allow చేయండి.";
 
         }
 
         else if (event.error === "no-speech") {
 
-            if (statusDisplay) {
-
-                statusDisplay.textContent =
-                    "🎤 వినిపించలేదు... మళ్లీ మంత్రం పలకండి";
-
-            }
+            statusEl.textContent =
+                "🎤 మీ స్వరం వినిపించలేదు. మళ్లీ ప్రయత్నించండి.";
 
         }
 
         else {
 
-            if (statusDisplay) {
-
-                statusDisplay.textContent =
-                    "⚠️ Voice recognition error: " +
-                    event.error;
-
-            }
+            statusEl.textContent =
+                "❌ Microphone error: " + event.error;
 
         }
 
     };
 
+}
 
-    return rec;
+
+// ================================
+// CHECK MANTRA
+// ================================
+
+function checkMantra(text) {
+
+    const enteredMantra =
+        mantraInput.value.trim();
+
+    if (!enteredMantra) {
+
+        return;
+
+    }
+
+
+    const spoken =
+        text.toLowerCase().trim();
+
+
+    // మొత్తం textలో మంత్రంలోని పదాలు
+    const words =
+        enteredMantra
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(word => word.length > 1);
+
+
+    let matched = 0;
+
+
+    words.forEach(word => {
+
+        if (spoken.includes(word)) {
+
+            matched++;
+
+        }
+
+    });
+
+
+    // మంత్రం match అయితే count +1
+    if (matched >= Math.max(1, Math.ceil(words.length * 0.5))) {
+
+        addCount();
+
+    }
 
 }
 
 
-/* ==============================
-   ADD COUNT
-   ============================== */
+// ================================
+// ADD COUNT
+// ================================
 
 function addCount() {
 
     if (count >= target) {
+
         return;
+
     }
+
 
     count++;
 
     updateDisplay();
 
 
+    statusEl.textContent =
+        "🙏 మంత్రం గుర్తించబడింది — " +
+        count +
+        " / " +
+        target;
+
+
     if (count >= target) {
 
-        count = target;
-
-        updateDisplay();
-
-        stopMantra();
-
-        if (statusDisplay) {
-
-            statusDisplay.textContent =
-                "🙏 జపం పూర్తయింది!";
-
-        }
-
-        if (completeCard) {
-
-            completeCard.style.display = "block";
-
-        }
-
-        if (completeMessage) {
-
-            completeMessage.textContent =
-                "మీరు " + target +
-                " సార్లు జపం పూర్తి చేశారు. 🙏";
-
-        }
+        completeJapam();
 
     }
 
 }
 
 
-/* ==============================
-   START MANTRA
-   ============================== */
+// ================================
+// DISPLAY
+// ================================
+
+function updateDisplay() {
+
+    countEl.textContent = count;
+
+    targetDisplay.textContent = target;
+
+    const percentage =
+        Math.min(
+            100,
+            (count / target) * 100
+        );
+
+
+    progressBar.style.width =
+        percentage + "%";
+
+}
+
+
+// ================================
+// START JAPAM
+// ================================
 
 function startMantra() {
 
-    if (count >= target) {
-
-        count = 0;
-
-        updateDisplay();
-
-    }
-
-
-    /*
-     * Create recognition only when
-     * user presses Start.
-     * This triggers microphone permission.
-     */
-
     if (!recognition) {
 
-        recognition = createRecognition();
+        setupSpeechRecognition();
 
     }
 
 
     if (!recognition) {
+
         return;
+
     }
 
 
+    if (isListening) {
+
+        return;
+
+    }
+
+
+    // Browser microphone permission
     try {
 
         recognition.start();
 
-    } catch (error) {
+    }
 
-        console.log(
-            "Start error:",
-            error
-        );
+    catch (error) {
+
+        console.log(error);
 
     }
 
 }
 
 
-/* ==============================
-   STOP MANTRA
-   ============================== */
+// ================================
+// STOP JAPAM
+// ================================
 
 function stopMantra() {
 
-    if (recognition) {
+    if (recognition && isListening) {
 
-        try {
-
-            recognition.stop();
-
-        } catch (error) {
-
-            console.log(
-                "Stop error:",
-                error
-            );
-
-        }
+        recognition.stop();
 
     }
+
 
     isListening = false;
 
+    startBtn.disabled = false;
 
-    if (startBtn) {
-        startBtn.disabled = false;
-    }
-
-    if (stopBtn) {
-        stopBtn.disabled = true;
-    }
+    stopBtn.disabled = true;
 
 
-    if (statusDisplay) {
-
-        statusDisplay.textContent =
-            "⏹️ జపం ఆపబడింది";
-
-    }
+    statusEl.textContent =
+        "⏹ జపం ఆపబడింది.";
 
 }
 
 
-/* ==============================
-   RESET
-   ============================== */
+// ================================
+// COMPLETE
+// ================================
 
-function resetJapam() {
+function completeJapam() {
 
-    stopMantra();
+    if (recognition && isListening) {
 
-    count = 0;
-
-    target =
-        Number(targetInput.value) || 1100;
-
-    updateDisplay();
-
-
-    if (recognizedText) {
-
-        recognizedText.textContent =
-            "Microphone ప్రారంభించిన తర్వాత మీ మాట ఇక్కడ కనిపిస్తుంది.";
+        recognition.stop();
 
     }
+
+
+    statusEl.textContent =
+        "🎉 మీ జపం పూర్తయింది! 🙏";
+
+
+    const completeCard =
+        document.getElementById("completeCard");
+
+    const completeMessage =
+        document.getElementById("completeMessage");
 
 
     if (completeCard) {
 
-        completeCard.style.display =
-            "none";
+        completeCard.style.display = "block";
 
     }
 
 
-    if (statusDisplay) {
+    if (completeMessage) {
 
-        statusDisplay.textContent =
-            "🎤 Start నొక్కి మంత్రం పలకండి";
+        completeMessage.textContent =
+            "మీరు " +
+            target +
+            " సార్లు మంత్ర జపం పూర్తి చేశారు. 🙏";
 
     }
 
 }
 
 
-/* ==============================
-   PAGE VISIBILITY
-   ============================== */
+// ================================
+// RESET
+// ================================
 
-document.addEventListener(
-    "visibilitychange",
-    function () {
+function resetJapam() {
 
-        if (document.hidden && isListening) {
+    if (recognition && isListening) {
 
-            console.log(
-                "Page hidden"
-            );
-
-        }
+        recognition.stop();
 
     }
-);
+
+
+    count = 0;
+
+    updateDisplay();
+
+
+    const completeCard =
+        document.getElementById("completeCard");
+
+    if (completeCard) {
+
+        completeCard.style.display = "none";
+
+    }
+
+
+    statusEl.textContent =
+        "🎤 Start నొక్కి మంత్రం పలకండి.";
+
+
+    recognizedText.textContent =
+        "Microphone ప్రారంభించిన తర్వాత మీ మాట ఇక్కడ కనిపిస్తుంది.";
+
+}
+
+
+// ================================
+// MAKE FUNCTIONS GLOBAL
+// ================================
+
+window.setTarget = setTarget;
+
+window.startMantra = startMantra;
+
+window.stopMantra = stopMantra;
+
+window.resetJapam = resetJapam;
