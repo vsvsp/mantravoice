@@ -1,14 +1,15 @@
 {
   "name": "MantraVoice",
   "short_name": "MantraVoice",
-  "description": "జపం మీ స్వరం… లెక్క మా బాధ్యత",
+  "description": "మంత్ర జపాన్ని మీ స్వరం ద్వారా గుర్తించి లెక్కించే యాప్",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#faf4ff",
-  "theme_color": "#6A1B9A",
+  "background_color": "#ffffff",
+  "theme_color": "#641b89",
   "lang": "te",
+  "dir": "ltr",
   "icons": [
     {
       "src": "./icon-192.png",
