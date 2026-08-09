@@ -2,36 +2,32 @@
 <html lang="te">
 
 <head>
-    <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-    <meta name="theme-color"
-          content="#6A1B9A">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <meta name="description"
-          content="MantraVoice - మీ మంత్ర జపాన్ని Voice ద్వారా గుర్తించి లెక్కించే యాప్">
+<meta name="theme-color"
+      content="#6A1B9A">
 
-    <link rel="manifest" href="manifest.json">
+<link rel="manifest"
+      href="manifest.json">
 
-    <link rel="icon"
-          type="image/png"
-          href="icon-192.png">
+<title>MantraVoice</title>
 
-    <title>MantraVoice</title>
+<link rel="stylesheet"
+      href="style.css">
 
-    <link rel="stylesheet"
-          href="style.css">
 </head>
 
 
 <body>
 
-<header class="app-header">
+<header>
 
     <div class="logo">
-        🕉️ <span>MantraVoice</span>
+        🕉️ MantraVoice
     </div>
 
     <div class="tagline">
@@ -43,280 +39,698 @@
 
 <main>
 
-    <!-- INTRO -->
 
-    <section class="intro">
+<section class="intro">
 
-        <h1>
-            🙏 మంత్ర జపం ప్రారంభించండి
-        </h1>
+    <h1>
+        🙏 మంత్ర జపం ప్రారంభించండి
+    </h1>
 
-        <p>
-            మీరు మంత్రం పలకండి.<br>
-            MantraVoice మీ జపాన్ని గుర్తించి
-            automaticగా count చేస్తుంది.
-        </p>
+    <p>
+        మీరు మంత్రం పలకండి.<br>
+        MantraVoice మీ జపాన్ని గుర్తించి
+        automaticగా count చేస్తుంది.
+    </p>
 
-    </section>
-
-
-    <!-- MANTRA SETTINGS -->
-
-    <section class="card">
-
-        <label for="mantra">
-            🕉️ మీ మంత్రం
-        </label>
-
-        <input
-            id="mantra"
-            type="text"
-            value="సాంబ సదాశివాయ నమః"
-            placeholder="మీ మంత్రాన్ని ఇక్కడ టైప్ చేయండి">
+</section>
 
 
-        <label for="target">
-            🎯 Target
-        </label>
 
-        <input
-            id="target"
-            type="number"
-            value="1100"
-            min="1">
+<section class="card">
 
+    <label>
+        🕉️ మీ మంత్రం
+    </label>
 
-        <div class="targets">
-
-            <button onclick="setTarget(11)">
-                11
-            </button>
-
-            <button onclick="setTarget(21)">
-                21
-            </button>
-
-            <button onclick="setTarget(54)">
-                54
-            </button>
-
-            <button onclick="setTarget(108)">
-                108
-            </button>
-
-            <button onclick="setTarget(1008)">
-                1008
-            </button>
-
-            <button onclick="setTarget(1100)">
-                1100
-            </button>
-
-        </div>
-
-    </section>
+    <input
+        id="mantra"
+        type="text"
+        value="సాంబ సదాశివాయ నమః">
 
 
-    <!-- COUNTER -->
+    <label>
+        🎯 Target
+    </label>
 
-    <section class="card counter">
-
-        <div class="small">
-            ప్రస్తుత జపం
-        </div>
-
-        <div id="count"
-             class="count">
-            0
-        </div>
-
-        <div class="target">
-            /
-            <span id="targetDisplay">
-                1100
-            </span>
-        </div>
+    <input
+        id="target"
+        type="number"
+        value="1100"
+        min="1">
 
 
-        <div class="progress">
+    <div class="targets">
 
-            <div id="progressBar"
-                 class="progress-bar">
-            </div>
-
-        </div>
-
-
-        <div id="status"
-             class="status">
-
-            🎤 Start నొక్కి మంత్రం పలకండి
-
-        </div>
-
-    </section>
-
-
-    <!-- START / STOP -->
-
-    <section class="buttons">
-
-        <button
-            id="startBtn"
-            class="start-button"
-            onclick="startMantra()">
-
-            🎤 Start Japam
-
+        <button type="button" onclick="setTarget(11)">
+            11
         </button>
 
-
-        <button
-            id="stopBtn"
-            class="stop-button"
-            onclick="stopMantra()"
-            disabled>
-
-            ⏹ Stop
-
+        <button type="button" onclick="setTarget(21)">
+            21
         </button>
 
-    </section>
-
-
-    <!-- RECOGNIZED VOICE -->
-
-    <section class="card">
-
-        <div class="section-title">
-            🎤 మీరు చెప్పింది
-        </div>
-
-        <div id="recognizedText"
-             class="recognized-text">
-
-            Microphone ప్రారంభించిన తర్వాత
-            మీ మాట ఇక్కడ కనిపిస్తుంది.
-
-        </div>
-
-    </section>
-
-
-    <!-- COMPLETE -->
-
-    <section
-        id="completeCard"
-        class="card complete-card">
-
-        <div class="complete-icon">
-            🙏
-        </div>
-
-        <h2>
-            జపం పూర్తయింది!
-        </h2>
-
-        <p id="completeMessage"></p>
-
-        <button
-            class="reset-button"
-            onclick="resetJapam()">
-
-            🔄 మళ్లీ ప్రారంభించండి
-
+        <button type="button" onclick="setTarget(54)">
+            54
         </button>
 
-    </section>
+        <button type="button" onclick="setTarget(108)">
+            108
+        </button>
+
+        <button type="button" onclick="setTarget(1008)">
+            1008
+        </button>
+
+        <button type="button" onclick="setTarget(1100)">
+            1100
+        </button>
+
+    </div>
+
+</section>
 
 
-    <!-- HELP -->
 
-    <section class="card info">
+<section class="card counter">
 
-        <h3>
-            ℹ️ ఎలా ఉపయోగించాలి?
-        </h3>
+    <div class="small">
+        ప్రస్తుత జపం
+    </div>
 
-        <ol>
+    <div id="count"
+         class="count">
+        0
+    </div>
 
-            <li>
-                మీ మంత్రాన్ని నమోదు చేయండి.
-            </li>
+    <div class="target">
+        /
+        <span id="targetDisplay">
+            1100
+        </span>
+    </div>
 
-            <li>
-                Target ఎంచుకోండి.
-            </li>
 
-            <li>
-                🎤 Start Japam నొక్కండి.
-            </li>
+    <div class="progress">
 
-            <li>
-                Microphone permission
-                Allow చేయండి.
-            </li>
+        <div id="progressBar"
+             class="progress-bar">
+        </div>
 
-            <li>
-                మంత్రాన్ని స్పష్టంగా పలకండి.
-            </li>
+    </div>
 
-            <li>
-                మంత్రం గుర్తించినప్పుడు
-                count పెరుగుతుంది.
-            </li>
 
-        </ol>
+    <div id="status"
+         class="status">
 
-    </section>
+        🎤 Start నొక్కి మంత్రం పలకండి
+
+    </div>
+
+</section>
+
+
+
+<section class="buttons">
+
+    <button
+        type="button"
+        id="startBtn"
+        class="start-button"
+        onclick="startMantra()">
+
+        🎤 Start Japam
+
+    </button>
+
+
+    <button
+        type="button"
+        id="stopBtn"
+        class="stop-button"
+        onclick="stopMantra()"
+        disabled>
+
+        ⏹ Stop
+
+    </button>
+
+</section>
+
+
+
+<section class="card">
+
+    <div class="section-title">
+        🎤 మీరు చెప్పింది
+    </div>
+
+    <div id="recognizedText"
+         class="recognized-text">
+
+        Microphone ప్రారంభించిన తర్వాత
+        మీ మాట ఇక్కడ కనిపిస్తుంది.
+
+    </div>
+
+</section>
+
+
+
+<section
+    id="completeCard"
+    class="card complete-card"
+    style="display:none;">
+
+    <div class="complete-icon">
+        🙏
+    </div>
+
+    <h2>
+        జపం పూర్తయింది!
+    </h2>
+
+    <p id="completeMessage"></p>
+
+    <button
+        type="button"
+        class="reset-button"
+        onclick="resetJapam()">
+
+        🔄 మళ్లీ ప్రారంభించండి
+
+    </button>
+
+</section>
+
+
+
+<section class="card info">
+
+    <h3>
+        ℹ️ ఎలా ఉపయోగించాలి?
+    </h3>
+
+    <ol>
+
+        <li>
+            మీ మంత్రాన్ని నమోదు చేయండి.
+        </li>
+
+        <li>
+            Target ఎంచుకోండి.
+        </li>
+
+        <li>
+            🎤 Start Japam నొక్కండి.
+        </li>
+
+        <li>
+            మంత్రాన్ని స్పష్టంగా పలకండి.
+        </li>
+
+        <li>
+            మంత్రం గుర్తించినప్పుడు count పెరుగుతుంది.
+        </li>
+
+    </ol>
+
+</section>
+
 
 </main>
 
 
+
 <footer>
 
-    <div>
-        🕉️ MantraVoice
-    </div>
-
-    <small>
-        జపం మీ స్వరం… లెక్క మా బాధ్యత
-    </small>
+    🕉️ MantraVoice<br>
+    జపం మీ స్వరం… లెక్క మా బాధ్యత
 
 </footer>
 
 
-<script src="app.js"></script>
-
 
 <script>
 
-if ("serviceWorker" in navigator) {
+/* =================================
+   MANTRAVOICE DIRECT VERSION
+   ================================= */
 
-    window.addEventListener(
-        "load",
-        function () {
+let count = 0;
 
-            navigator.serviceWorker
-                .register("sw.js")
-                .then(function () {
+let target = 1100;
 
-                    console.log(
-                        "MantraVoice Service Worker Registered"
-                    );
+let recognition = null;
 
-                })
-                .catch(function (error) {
+let running = false;
 
-                    console.log(
-                        "Service Worker Error:",
-                        error
-                    );
 
-                });
+
+const countBox =
+    document.getElementById("count");
+
+const targetBox =
+    document.getElementById("target");
+
+const targetDisplay =
+    document.getElementById("targetDisplay");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+const statusBox =
+    document.getElementById("status");
+
+const recognizedBox =
+    document.getElementById("recognizedText");
+
+const startButton =
+    document.getElementById("startBtn");
+
+const stopButton =
+    document.getElementById("stopBtn");
+
+const completeCard =
+    document.getElementById("completeCard");
+
+const completeMessage =
+    document.getElementById("completeMessage");
+
+
+
+/* ================================
+   UPDATE SCREEN
+   ================================ */
+
+function updateScreen() {
+
+    countBox.textContent = count;
+
+    targetDisplay.textContent = target;
+
+    let percent =
+        (count / target) * 100;
+
+    if (percent > 100) {
+        percent = 100;
+    }
+
+    progressBar.style.width =
+        percent + "%";
+}
+
+
+
+/* ================================
+   TARGET BUTTON
+   ================================ */
+
+function setTarget(value) {
+
+    target = Number(value);
+
+    targetBox.value = target;
+
+    count = 0;
+
+    completeCard.style.display =
+        "none";
+
+    updateScreen();
+
+    statusBox.textContent =
+        "🎯 Target " + target + " ఎంచుకున్నారు";
+
+}
+
+
+
+/* ================================
+   TARGET INPUT
+   ================================ */
+
+targetBox.addEventListener(
+    "input",
+    function() {
+
+        target =
+            Number(this.value) || 1;
+
+        updateScreen();
+
+    }
+);
+
+
+
+/* ================================
+   ADD COUNT
+   ================================ */
+
+function addCount() {
+
+    if (count >= target) {
+        return;
+    }
+
+    count++;
+
+    updateScreen();
+
+
+    if (count >= target) {
+
+        count = target;
+
+        updateScreen();
+
+        stopMantra();
+
+        statusBox.textContent =
+            "🙏 జపం పూర్తయింది!";
+
+        completeCard.style.display =
+            "block";
+
+        completeMessage.textContent =
+            "మీరు " +
+            target +
+            " సార్లు జపం పూర్తి చేశారు. 🙏";
+
+    }
+
+}
+
+
+
+/* ================================
+   SPEECH RECOGNITION
+   ================================ */
+
+function createVoice() {
+
+    const Speech =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if (!Speech) {
+
+        statusBox.textContent =
+            "❌ ఈ Browserలో Voice Recognition లేదు. Chrome ఉపయోగించండి.";
+
+        return null;
+    }
+
+
+    const r = new Speech();
+
+
+    r.lang = "te-IN";
+
+    r.continuous = true;
+
+    r.interimResults = true;
+
+    r.maxAlternatives = 1;
+
+
+
+    r.onstart = function() {
+
+        running = true;
+
+        statusBox.textContent =
+            "🎤 వింటోంది... మంత్రం పలకండి";
+
+        startButton.disabled = true;
+
+        stopButton.disabled = false;
+
+    };
+
+
+
+    r.onresult = function(event) {
+
+        let text = "";
+
+
+        for (
+            let i = event.resultIndex;
+            i < event.results.length;
+            i++
+        ) {
+
+            if (
+                event.results[i].isFinal
+            ) {
+
+                text +=
+                    event.results[i][0].transcript;
+
+            }
 
         }
-    );
+
+
+        if (text.trim() !== "") {
+
+            recognizedBox.textContent =
+                "🗣️ " + text.trim();
+
+
+            /*
+             * Voice detected = one Japam
+             */
+
+            addCount();
+
+        }
+
+    };
+
+
+
+    r.onerror = function(event) {
+
+        console.log(
+            "Voice error:",
+            event.error
+        );
+
+
+        if (
+            event.error === "not-allowed"
+        ) {
+
+            statusBox.textContent =
+                "⚠️ Microphone Permission ఇవ్వండి";
+
+        }
+
+        else if (
+            event.error === "no-speech"
+        ) {
+
+            statusBox.textContent =
+                "🎤 మీ మంత్రం వినిపించలేదు";
+
+        }
+
+        else {
+
+            statusBox.textContent =
+                "⚠️ Voice Error: " +
+                event.error;
+
+        }
+
+    };
+
+
+
+    r.onend = function() {
+
+        running = false;
+
+        startButton.disabled = false;
+
+        stopButton.disabled = true;
+
+
+        if (
+            count < target &&
+            recognition === r
+        ) {
+
+            /*
+             * Chrome automatic stop
+             * అయినప్పుడు మళ్లీ start
+             */
+
+            setTimeout(function() {
+
+                if (
+                    recognition === r &&
+                    count < target
+                ) {
+
+                    try {
+
+                        r.start();
+
+                    } catch(e) {
+
+                        console.log(e);
+
+                    }
+
+                }
+
+            }, 300);
+
+        }
+
+    };
+
+
+    return r;
+
+}
+
+
+
+/* ================================
+   START
+   ================================ */
+
+function startMantra() {
+
+    /*
+     * Browser microphone permission
+     * ఇప్పుడు request అవుతుంది
+     */
+
+    if (!recognition) {
+
+        recognition =
+            createVoice();
+
+    }
+
+
+    if (!recognition) {
+        return;
+    }
+
+
+    try {
+
+        recognition.start();
+
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+    }
+
+}
+
+
+
+/* ================================
+   STOP
+   ================================ */
+
+function stopMantra() {
+
+    if (recognition) {
+
+        try {
+
+            recognition.stop();
+
+        }
+
+        catch(error) {
+
+            console.log(error);
+
+        }
+
+    }
+
+
+    running = false;
+
+    startButton.disabled = false;
+
+    stopButton.disabled = true;
+
+    statusBox.textContent =
+        "⏹️ జపం ఆపబడింది";
+
+}
+
+
+
+/* ================================
+   RESET
+   ================================ */
+
+function resetJapam() {
+
+    stopMantra();
+
+    count = 0;
+
+    target =
+        Number(targetBox.value) || 1100;
+
+    recognizedBox.textContent =
+        "Microphone ప్రారంభించిన తర్వాత మీ మాట ఇక్కడ కనిపిస్తుంది.";
+
+    completeCard.style.display =
+        "none";
+
+    statusBox.textContent =
+        "🎤 Start నొక్కి మంత్రం పలకండి";
+
+    updateScreen();
+
+}
+
+
+
+/* ================================
+   INITIAL
+   ================================ */
+
+updateScreen();
+
+
+/* =================================
+   OLD SERVICE WORKER REMOVE
+   ================================= */
+
+if ("serviceWorker" in navigator) {
+
+    navigator.serviceWorker
+        .getRegistrations()
+        .then(function(registrations) {
+
+            registrations.forEach(
+                function(registration) {
+
+                    registration.unregister();
+
+                }
+            );
+
+        });
 
 }
 
@@ -325,4 +739,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 
-</html>
+    </html>
