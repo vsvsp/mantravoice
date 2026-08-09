@@ -1,33 +1,92 @@
 <!DOCTYPE html>
 <html lang="te">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
 <meta name="theme-color"
-      content="#6A1B9A">
+      content="#641b89">
+
+<meta name="mobile-web-app-capable"
+      content="yes">
+
+<meta name="apple-mobile-web-app-capable"
+      content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style"
+      content="default">
+
+<meta name="apple-mobile-web-app-title"
+      content="MantraVoice">
+
+<link rel="manifest"
+      href="manifest.json">
 
 <title>MantraVoice</title>
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+      href="style.css">
+
 </head>
+
 
 <body>
 
+
 <header>
-    <div class="logo">🕉️ MantraVoice</div>
+
+    <div class="logo">
+        🕉️ MantraVoice
+    </div>
+
     <div class="tagline">
         జపం మీ స్వరం… లెక్క మా బాధ్యత
     </div>
+
 </header>
+
 
 <main>
 
+
+<!-- =========================================
+     INSTALL APP BUTTON
+========================================= -->
+
+<button
+    id="installAppBtn"
+    onclick="installMantraVoice()"
+    style="
+        display:none;
+        width:100%;
+        margin:0 0 15px;
+        padding:15px;
+        border:0;
+        border-radius:16px;
+        background:#641b89;
+        color:white;
+        font-size:16px;
+        font-weight:800;
+        cursor:pointer;
+    "
+>
+    📲 MantraVoice App Install చేయండి
+</button>
+
+
+<!-- =========================================
+     INTRO
+========================================= -->
+
 <section class="intro">
 
-    <h1>🙏 మంత్ర జపం ప్రారంభించండి</h1>
+    <h1>
+        🙏 మంత్ర జపం ప్రారంభించండి
+    </h1>
 
     <p>
         మీరు మంత్రం పలకండి.<br>
@@ -37,6 +96,10 @@
 
 </section>
 
+
+<!-- =========================================
+     MANTRA SETTINGS
+========================================= -->
 
 <section class="card">
 
@@ -64,22 +127,38 @@
 
     <div class="targets">
 
-        <button type="button" onclick="setTarget(11)">11</button>
+        <button onclick="setTarget(11)">
+            11
+        </button>
 
-        <button type="button" onclick="setTarget(21)">21</button>
+        <button onclick="setTarget(21)">
+            21
+        </button>
 
-        <button type="button" onclick="setTarget(54)">54</button>
+        <button onclick="setTarget(54)">
+            54
+        </button>
 
-        <button type="button" onclick="setTarget(108)">108</button>
+        <button onclick="setTarget(108)">
+            108
+        </button>
 
-        <button type="button" onclick="setTarget(1008)">1008</button>
+        <button onclick="setTarget(1008)">
+            1008
+        </button>
 
-        <button type="button" onclick="setTarget(1100)">1100</button>
+        <button onclick="setTarget(1100)">
+            1100
+        </button>
 
     </div>
 
 </section>
 
+
+<!-- =========================================
+     COUNTER
+========================================= -->
 
 <section class="card counter">
 
@@ -87,36 +166,54 @@
         ప్రస్తుత జపం
     </div>
 
-    <div id="count" class="count">
+
+    <div
+        id="count"
+        class="count">
         0
     </div>
 
+
     <div class="target">
+
         /
-        <span id="targetDisplay">1100</span>
+        <span id="targetDisplay">
+            1100
+        </span>
+
     </div>
+
 
     <div class="progress">
 
-        <div id="progressBar"
-             class="progress-bar">
+        <div
+            id="progressBar"
+            class="progress-bar">
         </div>
 
     </div>
 
-    <div id="status" class="status">
+
+    <div
+        id="status"
+        class="status">
+
         🎤 Start నొక్కి మంత్రం పలకండి
+
     </div>
 
 </section>
 
+
+<!-- =========================================
+     START STOP
+========================================= -->
 
 <section class="buttons">
 
     <button
         id="startBtn"
         class="start-button"
-        type="button"
         onclick="startMantra()">
 
         🎤 Start Japam
@@ -127,7 +224,6 @@
     <button
         id="stopBtn"
         class="stop-button"
-        type="button"
         onclick="stopMantra()"
         disabled>
 
@@ -138,14 +234,20 @@
 </section>
 
 
+<!-- =========================================
+     RECOGNIZED VOICE
+========================================= -->
+
 <section class="card">
 
     <div class="section-title">
         🎤 మీరు చెప్పింది
     </div>
 
-    <div id="recognizedText"
-         class="recognized-text">
+
+    <div
+        id="recognizedText"
+        class="recognized-text">
 
         Microphone ప్రారంభించిన తర్వాత
         మీ మాట ఇక్కడ కనిపిస్తుంది.
@@ -155,23 +257,30 @@
 </section>
 
 
-<section id="completeCard"
-         class="card complete-card"
-         style="display:none;">
+<!-- =========================================
+     COMPLETE CARD
+========================================= -->
+
+<section
+    id="completeCard"
+    class="card complete-card"
+    style="display:none;">
 
     <div class="complete-icon">
         🙏
     </div>
 
+
     <h2>
         జపం పూర్తయింది!
     </h2>
 
+
     <p id="completeMessage"></p>
+
 
     <button
         class="reset-button"
-        type="button"
         onclick="resetJapam()">
 
         🔄 మళ్లీ ప్రారంభించండి
@@ -181,44 +290,229 @@
 </section>
 
 
+<!-- =========================================
+     INFO
+========================================= -->
+
 <section class="card info">
 
-    <h3>ℹ️ ఎలా ఉపయోగించాలి?</h3>
+    <h3>
+        ℹ️ ఎలా ఉపయోగించాలి?
+    </h3>
+
 
     <ol>
 
-        <li>మంత్రాన్ని నమోదు చేయండి.</li>
+        <li>
+            మీ మంత్రాన్ని నమోదు చేయండి.
+        </li>
 
-        <li>Target ఎంచుకోండి.</li>
+        <li>
+            Target ఎంచుకోండి.
+        </li>
 
-        <li>🎤 Start Japam ఒక్కసారి నొక్కండి.</li>
+        <li>
+            🎤 Start Japam నొక్కండి.
+        </li>
 
-        <li>ప్రతి సారి మంత్రం పలకండి.</li>
+        <li>
+            Microphone Permission Allow చేయండి.
+        </li>
 
-        <li>ప్రతి పూర్తి మంత్రానికి 1 Count పెరుగుతుంది.</li>
+        <li>
+            మంత్రాన్ని స్పష్టంగా పలకండి.
+        </li>
 
-        <li>తర్వాత మళ్లీ Start నొక్కాల్సిన అవసరం లేదు.</li>
+        <li>
+            ప్రతి మంత్రానికి Count automaticగా పెరుగుతుంది.
+        </li>
+
+        <li>
+            మధ్యలో మళ్లీ Start నొక్కాల్సిన అవసరం లేదు.
+        </li>
 
     </ol>
 
 </section>
 
+
 </main>
 
+
+<!-- =========================================
+     FOOTER
+========================================= -->
 
 <footer>
 
     🕉️ MantraVoice<br>
+
     జపం మీ స్వరం… లెక్క మా బాధ్యత
 
 </footer>
 
 
-<!-- IMPORTANT:
-     app.js ఒక్కసారి మాత్రమే load అవుతుంది
--->
+<!-- =========================================
+     INSTALL PWA SCRIPT
+========================================= -->
 
-<script src="app.js?v=30"></script>
+<script>
+
+let deferredPrompt = null;
+
+
+window.addEventListener(
+    "beforeinstallprompt",
+    function(event) {
+
+        event.preventDefault();
+
+        deferredPrompt = event;
+
+
+        const button =
+            document.getElementById(
+                "installAppBtn"
+            );
+
+
+        if (button) {
+
+            button.style.display =
+                "block";
+
+        }
+
+    }
+);
+
+
+async function installMantraVoice() {
+
+    if (!deferredPrompt) {
+
+        alert(
+            "Install option ప్రస్తుతం అందుబాటులో లేదు.\n\n" +
+            "Chromeలో ⋮ Menu → Add to Home screen ద్వారా Install చేయండి."
+        );
+
+        return;
+
+    }
+
+
+    deferredPrompt.prompt();
+
+
+    const result =
+        await deferredPrompt.userChoice;
+
+
+    console.log(
+        "Install:",
+        result.outcome
+    );
+
+
+    deferredPrompt = null;
+
+
+    const button =
+        document.getElementById(
+            "installAppBtn"
+        );
+
+
+    if (button) {
+
+        button.style.display =
+            "none";
+
+    }
+
+}
+
+
+window.addEventListener(
+    "appinstalled",
+    function() {
+
+        console.log(
+            "MantraVoice installed"
+        );
+
+
+        const button =
+            document.getElementById(
+                "installAppBtn"
+            );
+
+
+        if (button) {
+
+            button.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+</script>
+
+
+<!-- =========================================
+     APP JS
+========================================= -->
+
+<script src="app.js"></script>
+
+
+<!-- =========================================
+     SERVICE WORKER
+========================================= -->
+
+<script>
+
+if (
+    "serviceWorker"
+    in navigator
+) {
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            navigator.serviceWorker
+                .register("sw.js")
+                .then(
+                    function() {
+
+                        console.log(
+                            "MantraVoice Service Worker Registered"
+                        );
+
+                    }
+                )
+                .catch(
+                    function(error) {
+
+                        console.log(
+                            "Service Worker Error:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+</script>
+
 
 </body>
+
 </html>
