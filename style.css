@@ -3,206 +3,368 @@
 }
 
 html {
+    margin: 0;
+    padding: 0;
     width: 100%;
     min-height: 100%;
 }
 
 body {
     margin: 0;
+    padding: 0;
     width: 100%;
     min-height: 100vh;
-    font-family: Arial, "Noto Sans Telugu", sans-serif;
-    background: linear-gradient(180deg, #f7efff 0%, #fffaf5 100%);
-    color: #2d1b36;
+
+    font-family:
+        Arial,
+        "Noto Sans Telugu",
+        sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f6edff 0%,
+            #fff8f0 55%,
+            #ffffff 100%
+        );
+
+    color: #2c1935;
 }
 
 
-/* =========================
+/* =========================================
    HEADER
-========================= */
+========================================= */
 
 header {
     width: 100%;
-    padding: 22px 16px 20px;
+    padding: 24px 16px 22px;
+
     text-align: center;
-    background: linear-gradient(135deg, #5b168a, #8e35b5);
+
     color: white;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+
+    background:
+        linear-gradient(
+            135deg,
+            #43105f,
+            #70199a,
+            #8f35b5
+        );
+
+    box-shadow:
+        0 5px 20px rgba(53, 12, 72, 0.22);
 }
 
 .logo {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 800;
-    letter-spacing: 0.3px;
+    line-height: 1.2;
 }
 
 .tagline {
-    margin-top: 7px;
-    font-size: 14px;
-    opacity: 0.95;
+    margin-top: 8px;
+
+    font-size: 13px;
+
+    opacity: 0.92;
 }
 
 
-/* =========================
+/* =========================================
    MAIN
-========================= */
+========================================= */
 
 main {
     width: 100%;
     max-width: 620px;
+
     margin: 0 auto;
-    padding: 18px 14px 35px;
+
+    padding:
+        16px
+        13px
+        35px;
 }
 
 
-/* =========================
+/* =========================================
    INTRO
-========================= */
+========================================= */
 
 .intro {
     text-align: center;
-    margin-bottom: 16px;
+
+    padding:
+        5px
+        4px
+        12px;
 }
 
 .intro h1 {
-    margin: 0 0 9px;
+    margin:
+        0
+        0
+        8px;
+
     font-size: 23px;
     line-height: 1.4;
 }
 
 .intro p {
     margin: 0;
+
     font-size: 14px;
     line-height: 1.7;
-    color: #6b5b70;
+
+    color: #715f78;
 }
 
 
-/* =========================
+/* =========================================
    CARD
-========================= */
+========================================= */
 
 .card {
     width: 100%;
-    background: rgba(255,255,255,0.96);
-    border-radius: 20px;
+
+    margin-bottom: 14px;
+
     padding: 18px;
-    margin-bottom: 15px;
-    box-shadow: 0 5px 20px rgba(75, 35, 90, 0.10);
-    border: 1px solid #eadcf0;
+
+    border:
+        1px solid #eadcf0;
+
+    border-radius: 21px;
+
+    background:
+        rgba(255, 255, 255, 0.97);
+
+    box-shadow:
+        0 7px 24px
+        rgba(66, 25, 83, 0.09);
 }
 
 
-/* =========================
+/* =========================================
    LABEL
-========================= */
+========================================= */
 
 label {
     display: block;
+
     margin-bottom: 8px;
+
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 
-/* =========================
+/* =========================================
    INPUT
-========================= */
+========================================= */
 
 input {
     width: 100%;
     height: 52px;
-    padding: 0 14px;
-    margin-bottom: 16px;
 
-    border: 2px solid #e4d6e9;
+    margin-bottom: 15px;
+
+    padding:
+        0
+        14px;
+
+    border:
+        2px solid #e5d9e9;
+
     border-radius: 14px;
 
-    background: #fff;
+    outline: none;
+
+    background: #ffffff;
+
+    color: #30183a;
 
     font-size: 16px;
-    color: #2d1b36;
-
-    outline: none;
 }
 
 input:focus {
-    border-color: #7b269d;
-    box-shadow: 0 0 0 3px rgba(123,38,157,0.10);
+    border-color: #7c239f;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(124, 35, 159, 0.09);
 }
 
 
-/* =========================
-   TARGET BUTTONS
-========================= */
+/* =========================================
+   TARGETS
+========================================= */
 
 .targets {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 9px;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 8px;
 }
 
 .targets button {
-    height: 44px;
+    height: 43px;
+
     border: 0;
-    border-radius: 12px;
 
-    background: #f0e3f5;
-    color: #602080;
+    border-radius: 13px;
 
-    font-size: 15px;
-    font-weight: 700;
+    background:
+        #f0e3f6;
+
+    color:
+        #641f82;
+
+    font-size: 14px;
+    font-weight: 800;
 
     cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
 }
 
 .targets button:active {
-    transform: scale(0.96);
-    background: #dfc9e8;
+    transform: scale(0.95);
+
+    background:
+        #dec6e8;
 }
 
 
-/* =========================
-   COUNTER
-========================= */
+/* =========================================
+   COUNTER CARD
+========================================= */
 
 .counter {
+    position: relative;
+
     text-align: center;
-    padding: 24px 18px;
+
+    padding:
+        25px
+        17px
+        22px;
+
+    overflow: hidden;
 }
+
+
+/*
+   Decorative glow
+*/
+
+.counter::before {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    left: 50%;
+    top: -85px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        rgba(126, 37, 162, 0.08);
+
+    pointer-events: none;
+}
+
+
+/* =========================================
+   CURRENT JAPAM
+========================================= */
 
 .small {
+    position: relative;
+
     font-size: 14px;
-    color: #806d87;
-    margin-bottom: 4px;
-}
 
-.count {
-    font-size: 72px;
-    line-height: 1;
-    font-weight: 800;
-    color: #661b8b;
-    margin: 7px 0;
-}
+    color: #816e88;
 
-.target {
-    font-size: 18px;
-    color: #806d87;
     font-weight: 600;
 }
 
 
-/* =========================
+/* =========================================
+   BIG COUNT
+========================================= */
+
+.count {
+    position: relative;
+
+    margin:
+        8px
+        0
+        2px;
+
+    font-size: 76px;
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    letter-spacing: -2px;
+
+    color:
+        #641b89;
+
+    text-shadow:
+        0 3px 8px
+        rgba(91, 22, 137, 0.12);
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+/* =========================================
+   TARGET
+========================================= */
+
+.target {
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #85728c;
+}
+
+
+/* =========================================
    PROGRESS
-========================= */
+========================================= */
 
 .progress {
     width: 100%;
-    height: 12px;
-    margin: 20px 0 15px;
 
-    background: #eee4f1;
+    height: 12px;
+
+    margin:
+        20px
+        0
+        14px;
+
     border-radius: 20px;
+
+    background:
+        #eee5f2;
+
     overflow: hidden;
 }
 
@@ -210,238 +372,317 @@ input:focus {
     width: 0%;
     height: 100%;
 
-    background: linear-gradient(
-        90deg,
-        #6b1b91,
-        #b14bd0
-    );
-
     border-radius: 20px;
 
-    transition: width 0.35s ease;
+    background:
+        linear-gradient(
+            90deg,
+            #641b89,
+            #a844c7
+        );
+
+    transition:
+        width 0.4s ease;
 }
 
 
-/* =========================
+/* =========================================
    STATUS
-========================= */
+========================================= */
 
 .status {
-    min-height: 24px;
+    min-height: 23px;
+
     font-size: 14px;
+
     line-height: 1.5;
-    color: #614b69;
+
+    color: #66516d;
 }
 
 
-/* =========================
-   START / STOP BUTTONS
-========================= */
+/* =========================================
+   START / STOP
+========================================= */
 
 .buttons {
     width: 100%;
+
     display: grid;
-    grid-template-columns: 1fr 0.65fr;
-    gap: 10px;
-    margin-bottom: 15px;
+
+    grid-template-columns:
+        1fr
+        0.55fr;
+
+    gap: 9px;
+
+    margin-bottom: 14px;
 }
 
 .buttons button {
-    min-height: 56px;
+    min-height: 57px;
+
     border: 0;
-    border-radius: 16px;
+
+    border-radius: 17px;
 
     font-size: 16px;
+
     font-weight: 800;
 
     cursor: pointer;
+
+    transition:
+        transform 0.12s ease;
 }
 
 .start-button {
-    background: linear-gradient(
-        135deg,
-        #5d1689,
-        #8d2db2
-    );
-
     color: white;
 
+    background:
+        linear-gradient(
+            135deg,
+            #541172,
+            #8423a9
+        );
+
     box-shadow:
-        0 6px 15px rgba(91,22,137,0.25);
+        0 7px 17px
+        rgba(84, 17, 114, 0.25);
 }
 
 .stop-button {
-    background: #eee7f0;
-    color: #5d4864;
+    color: #5c4a62;
+
+    background:
+        #eee8f0;
 }
 
 .buttons button:active {
-    transform: scale(0.97);
+    transform:
+        scale(0.97);
 }
 
 .buttons button:disabled {
     opacity: 0.55;
-    cursor: not-allowed;
+
+    cursor:
+        not-allowed;
 }
 
 
-/* =========================
-   RECOGNIZED TEXT
-========================= */
+/* =========================================
+   RECOGNIZED VOICE
+========================================= */
 
 .section-title {
-    font-size: 16px;
-    font-weight: 800;
     margin-bottom: 10px;
+
+    font-size: 16px;
+
+    font-weight: 800;
 }
 
 .recognized-text {
     min-height: 58px;
+
     padding: 13px;
 
-    background: #faf5fc;
-    border: 1px solid #eadcf0;
-    border-radius: 13px;
+    border:
+        1px solid #eadff0;
+
+    border-radius: 14px;
+
+    background:
+        #fbf7fd;
+
+    color:
+        #5c4664;
 
     font-size: 15px;
+
     line-height: 1.6;
-    color: #563f60;
+
+    word-break: break-word;
 }
 
 
-/* =========================
+/* =========================================
    COMPLETE
-========================= */
+========================================= */
 
 .complete-card {
     text-align: center;
-    background: linear-gradient(
-        180deg,
-        #fffaf0,
-        #fff
-    );
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff9ec,
+            #ffffff
+        );
 }
 
 .complete-icon {
-    font-size: 55px;
+    font-size: 56px;
+
     margin-bottom: 4px;
 }
 
 .complete-card h2 {
-    margin: 5px 0;
+    margin:
+        5px
+        0
+        8px;
+
     font-size: 23px;
 }
 
 .complete-card p {
-    color: #705d76;
-}
+    margin:
+        0
+        0
+        15px;
 
+    color: #705c76;
+}
 
 .reset-button {
     width: 100%;
+
     height: 52px;
 
     border: 0;
-    border-radius: 14px;
 
-    background: #6b1b91;
+    border-radius: 15px;
+
     color: white;
 
+    background:
+        linear-gradient(
+            135deg,
+            #641b89,
+            #8e2bb1
+        );
+
     font-size: 15px;
+
     font-weight: 800;
 
     cursor: pointer;
 }
 
 
-/* =========================
+/* =========================================
    INFO
-========================= */
+========================================= */
 
 .info h3 {
-    margin-top: 0;
+    margin:
+        0
+        0
+        12px;
+
     font-size: 18px;
 }
 
 .info ol {
     margin: 0;
-    padding-left: 23px;
+
+    padding-left: 22px;
 }
 
 .info li {
     margin-bottom: 9px;
+
     font-size: 14px;
+
     line-height: 1.55;
 }
 
 
-/* =========================
+/* =========================================
    FOOTER
-========================= */
+========================================= */
 
 footer {
     width: 100%;
-    padding: 22px 15px;
+
+    padding:
+        22px
+        14px;
 
     text-align: center;
 
-    background: #32113f;
     color: white;
 
+    background:
+        #30103c;
+
     font-size: 13px;
+
     line-height: 1.7;
 }
 
 
-/* =========================
+/* =========================================
    MOBILE
-========================= */
+========================================= */
 
 @media (max-width: 480px) {
 
     header {
-        padding: 18px 12px;
+        padding:
+            19px
+            12px
+            20px;
     }
 
     .logo {
-        font-size: 25px;
+        font-size: 26px;
     }
 
     .tagline {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     main {
-        padding: 14px 10px 28px;
+        padding:
+            13px
+            10px
+            30px;
     }
 
     .intro h1 {
         font-size: 21px;
     }
 
+    .intro p {
+        font-size: 13px;
+    }
+
     .card {
         padding: 15px;
-        border-radius: 17px;
+
+        border-radius: 18px;
+    }
+
+    .counter {
+        padding:
+            23px
+            14px
+            20px;
     }
 
     .count {
-        font-size: 64px;
-    }
-
-    .targets {
-        gap: 7px;
-    }
-
-    .targets button {
-        height: 42px;
+        font-size: 68px;
     }
 
 }
 
 
-/* =========================
-   VERY SMALL PHONES
-========================= */
+/* =========================================
+   SMALL PHONE
+========================================= */
 
 @media (max-width: 360px) {
 
@@ -454,11 +695,34 @@ footer {
     }
 
     .count {
-        font-size: 56px;
+        font-size: 59px;
     }
 
     .buttons {
         grid-template-columns: 1fr;
     }
 
-       }
+    .targets button {
+        height: 40px;
+
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================
+   VERY LARGE SCREEN
+========================================= */
+
+@media (min-width: 700px) {
+
+    main {
+        padding-top: 28px;
+    }
+
+    .card {
+        padding: 22px;
+    }
+
+    }
