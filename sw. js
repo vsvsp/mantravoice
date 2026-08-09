@@ -1,112 +1,90 @@
-const CACHE_NAME = "mantravoice-v2";
+const CACHE_NAME = "mantravoice-v1";
 
 const FILES_TO_CACHE = [
-    "./",
-    "./index.html",
-    "./style.css",
-    "./app.js",
-    "./manifest.json",
-    "./icon-192.png",
-    "./icon-512.png"
+  "/mantravoice/",
+  "/mantravoice/index.html",
+  "/mantravoice/style.css",
+  "/mantravoice/app.js",
+  "/mantravoice/manifest.json",
+  "/mantravoice/icon-192.png",
+  "/mantravoice/icon-512.png"
 ];
 
 
-self.addEventListener(
-    "install",
-    function(event) {
+/* ================================
+   INSTALL
+================================ */
 
-        event.waitUntil(
+self.addEventListener("install", function(event) {
 
-            caches.open(CACHE_NAME)
-                .then(
-                    function(cache) {
+  event.waitUntil(
 
-                        return cache.addAll(
-                            FILES_TO_CACHE
-                        );
+    caches.open(CACHE_NAME).then(function(cache) {
 
-                    }
-                )
+      return cache.addAll(FILES_TO_CACHE);
 
-        );
+    })
 
-        self.skipWaiting();
+  );
 
-    }
-);
+  self.skipWaiting();
+
+});
 
 
-self.addEventListener(
-    "activate",
-    function(event) {
+/* ================================
+   ACTIVATE
+================================ */
 
-        event.waitUntil(
+self.addEventListener("activate", function(event) {
 
-            caches.keys()
-                .then(
-                    function(names) {
+  event.waitUntil(
 
-                        return Promise.all(
+    caches.keys().then(function(names) {
 
-                            names
-                                .filter(
-                                    function(name) {
+      return Promise.all(
 
-                                        return (
-                                            name !==
-                                            CACHE_NAME
-                                        );
+        names.map(function(name) {
 
-                                    }
-                                )
-                                .map(
-                                    function(name) {
+          if (name !== CACHE_NAME) {
 
-                                        return caches.delete(
-                                            name
-                                        );
+            return caches.delete(name);
 
-                                    }
-                                )
+          }
 
-                        );
+        })
 
-                    }
-                )
+      );
 
-        );
+    })
 
-        self.clients.claim();
+  );
 
-    }
-);
+  self.clients.claim();
+
+});
 
 
-self.addEventListener(
-    "fetch",
-    function(event) {
+/* ================================
+   FETCH
+================================ */
 
-        event.respondWith(
+self.addEventListener("fetch", function(event) {
 
-            caches.match(event.request)
-                .then(
-                    function(response) {
+  event.respondWith(
 
-                        if (response) {
+    caches.match(event.request).then(function(response) {
 
-                            return response;
+      if (response) {
 
-                        }
+        return response;
 
+      }
 
-                        return fetch(
-                            event.request
-                        );
+      return fetch(event.request);
 
-                    }
-                )
+    })
 
-        );
+  );
 
-    }
-);
+});
