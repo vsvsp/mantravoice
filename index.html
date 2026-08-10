@@ -23,6 +23,14 @@
 <link rel="manifest"
       href="/mantravoice/manifest.json">
 
+<link rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/mantravoice/icon-192.png">
+
+<link rel="apple-touch-icon"
+      href="/mantravoice/icon-192.png">
+
 <title>MantraVoice</title>
 
 <link rel="stylesheet"
@@ -50,7 +58,9 @@
 <main>
 
 
-<!-- INSTALL BUTTON -->
+<!-- ================================
+     INSTALL BUTTON
+================================ -->
 
 <button
     id="installAppBtn"
@@ -66,6 +76,7 @@
         color:white;
         font-size:16px;
         font-weight:800;
+        cursor:pointer;
     "
 >
     📲 MantraVoice App Install
@@ -113,17 +124,29 @@
 
     <div class="targets">
 
-        <button onclick="setTarget(11)">11</button>
+        <button onclick="setTarget(11)">
+            11
+        </button>
 
-        <button onclick="setTarget(21)">21</button>
+        <button onclick="setTarget(21)">
+            21
+        </button>
 
-        <button onclick="setTarget(54)">54</button>
+        <button onclick="setTarget(54)">
+            54
+        </button>
 
-        <button onclick="setTarget(108)">108</button>
+        <button onclick="setTarget(108)">
+            108
+        </button>
 
-        <button onclick="setTarget(1008)">1008</button>
+        <button onclick="setTarget(1008)">
+            1008
+        </button>
 
-        <button onclick="setTarget(1100)">1100</button>
+        <button onclick="setTarget(1100)">
+            1100
+        </button>
 
     </div>
 
@@ -288,46 +311,97 @@
 </footer>
 
 
-<!-- INSTALL SCRIPT -->
+<!-- =================================
+     PWA INSTALL SCRIPT
+================================= -->
 
 <script>
 
 let deferredPrompt = null;
 
 
-/* PWA INSTALL EVENT */
+/* ---------------------------------
+   CHECK IF APP IS ALREADY INSTALLED
+--------------------------------- */
+
+function isAppInstalled() {
+
+    return (
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches
+        ||
+        window.navigator.standalone === true
+    );
+
+}
+
+
+/* ---------------------------------
+   BEFORE INSTALL PROMPT
+--------------------------------- */
 
 window.addEventListener(
     "beforeinstallprompt",
     function(event) {
 
+        console.log(
+            "PWA install prompt available"
+        );
+
         event.preventDefault();
 
         deferredPrompt = event;
-
-        console.log(
-            "PWA install available"
-        );
 
     }
 );
 
 
-/* INSTALL BUTTON */
+/* ---------------------------------
+   INSTALL BUTTON
+--------------------------------- */
 
 async function installMantraVoice() {
 
+    /* If already installed */
+
+    if (isAppInstalled()) {
+
+        alert(
+            "MantraVoice ఇప్పటికే మీ ఫోన్‌లో Install అయింది."
+        );
+
+        return;
+
+    }
+
+
+    /* If Chrome provided PWA install */
+
     if (deferredPrompt) {
 
-        deferredPrompt.prompt();
+        try {
 
-        const choice =
-            await deferredPrompt.userChoice;
+            deferredPrompt.prompt();
 
-        console.log(
-            "Install result:",
-            choice.outcome
-        );
+            const choice =
+                await deferredPrompt.userChoice;
+
+            console.log(
+                "Install result:",
+                choice.outcome
+            );
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "Install error:",
+                error
+            );
+
+        }
 
         deferredPrompt = null;
 
@@ -336,22 +410,31 @@ async function installMantraVoice() {
     }
 
 
+    /* Chrome menu instruction */
+
     alert(
-        "Chrome Menu ⋮ → Add to Home screen / Install app ఎంచుకోండి."
+        "Chrome ⋮ Menu తెరవండి.\n\n" +
+        "Install and create shortcut… " +
+        "ఎంచుకోండి.\n\n" +
+        "అక్కడ MantraVoice ను Add చేయండి."
     );
 
 }
 
 
-/* APP INSTALLED */
+/* ---------------------------------
+   APP INSTALLED
+--------------------------------- */
 
 window.addEventListener(
     "appinstalled",
     function() {
 
         console.log(
-            "MantraVoice installed"
+            "MantraVoice successfully installed"
         );
+
+        deferredPrompt = null;
 
         const button =
             document.getElementById(
@@ -368,10 +451,40 @@ window.addEventListener(
     }
 );
 
+
+/* ---------------------------------
+   PAGE LOAD
+--------------------------------- */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        if (isAppInstalled()) {
+
+            const button =
+                document.getElementById(
+                    "installAppBtn"
+                );
+
+            if (button) {
+
+                button.style.display =
+                    "none";
+
+            }
+
+        }
+
+    }
+);
+
 </script>
 
 
-<!-- SERVICE WORKER -->
+<!-- =================================
+     SERVICE WORKER
+================================= -->
 
 <script>
 
@@ -393,7 +506,7 @@ if ("serviceWorker" in navigator) {
                     function(registration) {
 
                         console.log(
-                            "Service Worker registered:",
+                            "MantraVoice Service Worker registered:",
                             registration.scope
                         );
 
@@ -418,9 +531,13 @@ if ("serviceWorker" in navigator) {
 </script>
 
 
-<!-- EXISTING APP -->
+<!-- =================================
+     EXISTING APP
+================================= -->
 
-<script src="/mantravoice/app.js"></script>
+<script
+    src="/mantravoice/app.js">
+</script>
 
 
 </body>
