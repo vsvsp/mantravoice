@@ -3,8 +3,8 @@
   "name": "MantraVoice",
   "short_name": "MantraVoice",
   "description": "మంత్ర జపాన్ని మీ స్వరం ద్వారా గుర్తించి లెక్కించే యాప్",
-  "start_url": "/mantravoice/",
-  "scope": "/mantravoice/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
@@ -14,13 +14,13 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/mantravoice/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/mantravoice/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
